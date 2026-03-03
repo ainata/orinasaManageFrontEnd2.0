@@ -1,0 +1,54 @@
+{
+  "menu": [
+    {
+      "route": "dashboard",
+      "name": "dashboard",
+      "type": "link",
+      "icon": "dashboard",
+      "badge": {
+        "color": "red-50",
+        "value": "5"
+      }
+    },
+    {
+      "route": "design",
+      "name": "design",
+      "type": "sub",
+      "icon": "color_lens",
+      "children": [
+        {
+          "route": "colors",
+          "name": "colors",
+          "type": "link",
+          "icon": "colorize"
+        },
+        {
+          "route": "icons",
+          "name": "icons",
+          "type": "link",
+          "icon": "flag"
+        }
+      ],
+      "permissions": {
+        "only": [
+          "ADMIN",
+          "MANAGER"
+        ]
+      }
+    },
+    {
+      "route": "settings",
+      "name": "settings",
+      "type": "sub",
+      "icon": "settings",
+      "children": [
+        {
+          "route": "company",
+          "name": "company",
+          "type": "link",
+          "icon": "account_balance"
+        }
+      ]
+    }
+  ]
+}
