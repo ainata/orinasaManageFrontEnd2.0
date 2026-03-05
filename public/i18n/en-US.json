@@ -42,6 +42,7 @@
   "company": "Company",
   "email": "Email",
   "operation": "Operation",
+  "add": "Add",
   "edit": "Edit",
   "delete": "Delete",
   "confirm_delete": "Confirm delete?",
@@ -64,5 +65,7 @@
   "register_title": "It only takes a few seconds to create your account",
   "read_and_agree": "I have read and agree to the terms of service",
   "have_an_account": "Already have an account",
-  "restore_defaults": "Restore defaults"
+  "restore_defaults": "Restore defaults",
+  "save": "Save",
+  "cancel": "Cancel"
 }

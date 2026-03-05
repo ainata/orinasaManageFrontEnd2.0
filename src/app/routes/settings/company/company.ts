@@ -9,8 +9,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { AddCompanyDialog } from './add-company-dialog/add-company-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
+import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog';
 
 export interface Company {
   id: number;
@@ -64,6 +65,7 @@ const MOCK_DATA: Company[] = [
     MatCardModule,
     MatPaginator,
     MatDialogModule,
+    TranslateModule,
   ],
   templateUrl: './company.html',
   styleUrl: './company.scss',
@@ -88,7 +90,10 @@ export class CompanyComponent {
   }
 
   openAddCompanyModal() {
-    const dialogRef = this.dialog.open(AddCompanyDialog);
+    const dialogRef = this.dialog.open(AddCompanyDialogComponent, {
+      disableClose: true,
+      autoFocus: false,
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

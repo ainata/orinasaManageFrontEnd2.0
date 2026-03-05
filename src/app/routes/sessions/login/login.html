@@ -40,6 +40,23 @@
           }
         </mat-form-field>
 
+        <mat-form-field appearance="outline">
+          <mat-label>Clé</mat-label>
+          <input matInput placeholder="" type="text" formControlName="key" required />
+          @if (key.invalid) {
+            <mat-error>
+              @if (key.errors?.['required']) {
+                <span>
+                  {{ 'please_enter' | translate }}
+                </span>
+              }
+              @if (key.errors?.['remote']) {
+                <span>{{ key.errors?.['remote'] }}</span>
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
         <mat-checkbox formControlName="rememberMe">{{ 'remember_me' | translate }}</mat-checkbox>
 
         <button

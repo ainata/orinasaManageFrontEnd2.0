@@ -83,7 +83,7 @@ export class SettingsService {
   }
 
   getTranslateLang() {
-    if (this.options.language === 'auto') {
+    if (this.options.language === 'fr-FR') {
       const browserLang = navigator.language;
       return this.languages.includes(browserLang) ? browserLang : 'fr-FR';
     }

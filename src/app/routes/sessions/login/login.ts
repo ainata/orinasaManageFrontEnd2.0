@@ -39,6 +39,7 @@ export class Login {
   loginForm = this.fb.nonNullable.group({
     email: ['aina', [Validators.required]],
     password: ['aina', [Validators.required]],
+    key: ['http://localhost:8080', [Validators.required]],
     rememberMe: [false],
   });
 
@@ -48,6 +49,10 @@ export class Login {
 
   get password() {
     return this.loginForm.get('password')!;
+  }
+
+  get key() {
+    return this.loginForm.get('key')!;
   }
 
   get rememberMe() {

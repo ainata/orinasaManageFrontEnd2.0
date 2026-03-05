@@ -1,4 +1,4 @@
-<page-header class="bg-red-40" />
+<page-header class="bg-blue-40" />
 <div class="sm:p-6 w-full max-w-screen-xl mx-auto">
   <mat-card class="company-card">
     <div
@@ -12,16 +12,27 @@
       "
     >
       <!-- Search -->
-      <mat-form-field appearance="outline" class="filter-field" style="flex: 1; min-width: 200px">
+      <mat-form-field
+        subscriptSizing="dynamic"
+        appearance="outline"
+        class="filter-field"
+        style="flex: 1; min-width: 250px; max-width: 400px"
+      >
         <mat-label>Rechercher</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Nom, email, ville" />
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
 
       <!-- Ajouter Button -->
-      <button mat-flat-button color="primary" (click)="openAddCompanyModal()">
-        <mat-icon>add</mat-icon>
-        Ajouter
+      <button
+        (click)="openAddCompanyModal()"
+        mat-flat-button
+        color="accent"
+        class="add-button"
+        style="white-space: nowrap; height: 56px"
+      >
+        <mat-icon class="mr-2">add</mat-icon>
+        {{ 'add' | translate }}
       </button>
     </div>
 

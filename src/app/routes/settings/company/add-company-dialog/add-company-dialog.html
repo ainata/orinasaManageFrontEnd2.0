@@ -1,1 +1,35 @@
-<p>add-company-dialog works!</p>
+<div class="dialog-container">
+  <!-- Header -->
+  <div class="dialog-header">
+    <h2 mat-dialog-title>{{ 'add' | translate }} Entreprise</h2>
+  </div>
+
+  <!-- Content -->
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="companyForm" class="form-grid">
+      <!-- Code -->
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field">
+        <mat-label>Code</mat-label>
+        <input matInput formControlName="code" placeholder="Code de l'entreprise" />
+        <mat-icon matPrefix>code</mat-icon>
+      </mat-form-field>
+
+      <!-- Domain -->
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field">
+        <mat-label>Domaine</mat-label>
+        <input matInput formControlName="domain" placeholder="Domaine de l'entreprise" />
+        <mat-icon matPrefix>domain</mat-icon>
+      </mat-form-field>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <div mat-dialog-actions class="dialog-footer">
+    <button mat-stroked-button mat-dialog-close>
+      {{ 'cancel' | translate }}
+    </button>
+    <button mat-flat-button color="accent" (click)="onSubmit()" [disabled]="!companyForm.valid">
+      {{ 'save' | translate }}
+    </button>
+  </div>
+</div>
