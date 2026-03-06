@@ -1,13 +1,16 @@
 import { HttpErrorResponse, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { TokenService } from '@core/authentication';
+import { getStoredApiBaseUrl, normalizeApiBaseUrl, TokenService } from '@core/authentication';
+import { LocalStorageService } from '@shared';
 import { catchError, tap, throwError } from 'rxjs';
 import { BASE_URL, hasHttpScheme } from './base-url-interceptor';
 
 export function tokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const router = inject(Router);
-  const baseUrl = inject(BASE_URL, { optional: true });
+  const configuredBaseUrl = normalizeApiBaseUrl(inject(BASE_URL, { optional: true }));
+  const storedBaseUrl = getStoredApiBaseUrl(inject(LocalStorageService));
+  const baseUrl = storedBaseUrl || configuredBaseUrl;
   const tokenService = inject(TokenService);
 
   const includeBaseUrl = (url: string) => {

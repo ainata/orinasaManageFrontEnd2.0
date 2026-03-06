@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { map } from 'rxjs';
+import { normalizeApiBaseUrl } from './api-base-url';
 
 import { Menu } from '@core';
 import { Token, User } from './interface';
@@ -11,8 +12,33 @@ import { Token, User } from './interface';
 export class LoginService {
   protected readonly http = inject(HttpClient);
 
-  login(username: string, password: string, rememberMe = false) {
-    return this.http.post<Token>('/auth/login', { username, password, rememberMe });
+  private buildLoginUrl(key: string) {
+    const normalized = normalizeApiBaseUrl(key);
+    if (!normalized) {
+      return '/api/auth/login';
+    }
+    return `${normalized}/api/auth/login`;
+  }
+
+  login(username: string, password: string, key: string, rememberMe = false) {
+    const url = this.buildLoginUrl(key);
+    return this.http.post<any>(url, { email: username, password }).pipe(
+      map(res => {
+        if (res?.access_token) {
+          return res;
+        }
+
+        if (res?.token) {
+          return {
+            access_token: res.token,
+            token_type: 'Bearer',
+            user: res.user,
+          };
+        }
+
+        return res;
+      })
+    );
   }
 
   refresh(params: Record<string, any>) {

@@ -79,6 +79,12 @@ function is(reqInfo: RequestInfo, path: string) {
     return false;
   }
 
+  const url = reqInfo.req.url;
+  // Do not mock real backend calls (absolute URL or /api/* endpoints).
+  if (/^https?:\/\//i.test(url) || /\/api\//i.test(url)) {
+    return false;
+  }
+
   return new RegExp(`${path}(/)?$`, 'i').test(reqInfo.req.url);
 }
 

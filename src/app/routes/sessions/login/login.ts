@@ -1,17 +1,25 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { MtxButtonModule } from '@ng-matero/extensions/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { LocalStorageService } from '@shared';
 
-import { AuthService } from '@core/authentication';
+import {
+  AuthService,
+  clearStoredApiBaseUrl,
+  getStoredApiBaseUrl,
+  setStoredApiBaseUrl,
+} from '@core/authentication';
 
 @Component({
   selector: 'app-login',
@@ -24,17 +32,24 @@ import { AuthService } from '@core/authentication';
     MatCardModule,
     MatCheckboxModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
     MtxButtonModule,
     TranslateModule,
   ],
 })
-export class Login {
+export class Login implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  private readonly store = inject(LocalStorageService);
 
   isSubmitting = false;
+  hasStoredKey = false;
+  storedKey = '';
+  showKey = false;
 
   loginForm = this.fb.nonNullable.group({
     email: ['aina', [Validators.required]],
@@ -59,14 +74,49 @@ export class Login {
     return this.loginForm.get('rememberMe')!;
   }
 
+  ngOnInit() {
+    this.loadStoredKey();
+  }
+
+  onKeyButtonClick() {
+    if (this.hasStoredKey) {
+      this.clearStoredKey();
+      return;
+    }
+
+    this.showKey = !this.showKey;
+    this.updateKeyValidators();
+  }
+
   login() {
+    if (this.isSubmitting) {
+      return;
+    }
+
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
     this.isSubmitting = true;
 
+    const key = this.resolveApiKey();
+    if (!key) {
+      this.showKey = true;
+      this.updateKeyValidators();
+      this.key.setErrors({ required: true });
+      this.isSubmitting = false;
+      return;
+    }
+
     this.auth
-      .login(this.email.value, this.password.value, this.rememberMe.value)
-      .pipe(filter(authenticated => authenticated))
+      .login(this.email.value, this.password.value, key, this.rememberMe.value)
       .subscribe({
         next: () => {
+          this.storedKey = setStoredApiBaseUrl(this.store, key);
+          this.hasStoredKey = !!this.storedKey;
+          this.showKey = !this.hasStoredKey;
+          this.updateKeyValidators();
           this.router.navigateByUrl('/');
         },
         error: (errorRes: HttpErrorResponse) => {
@@ -82,5 +132,39 @@ export class Login {
           this.isSubmitting = false;
         },
       });
+  }
+
+  private loadStoredKey() {
+    this.storedKey = getStoredApiBaseUrl(this.store);
+    this.hasStoredKey = !!this.storedKey;
+    this.showKey = !this.hasStoredKey;
+
+    if (this.hasStoredKey) {
+      this.key.setValue(this.storedKey);
+    }
+
+    this.updateKeyValidators();
+  }
+
+  private clearStoredKey() {
+    clearStoredApiBaseUrl(this.store);
+    this.storedKey = '';
+    this.hasStoredKey = false;
+    this.showKey = true;
+    this.key.setValue('');
+    this.updateKeyValidators();
+  }
+
+  private updateKeyValidators() {
+    if (this.showKey) {
+      this.key.setValidators([Validators.required]);
+    } else {
+      this.key.clearValidators();
+    }
+    this.key.updateValueAndValidity();
+  }
+
+  private resolveApiKey() {
+    return this.hasStoredKey ? this.storedKey : this.key.value.trim();
   }
 }

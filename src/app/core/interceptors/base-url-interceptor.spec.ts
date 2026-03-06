@@ -1,6 +1,8 @@
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { API_BASE_URL_STORAGE_KEY } from '@core/authentication';
+import { LocalStorageService, MemoryStorageService } from '@shared';
 import { BASE_URL, baseUrlInterceptor } from './base-url-interceptor';
 
 describe('BaseUrlInterceptor', () => {
@@ -17,6 +19,7 @@ describe('BaseUrlInterceptor', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        { provide: LocalStorageService, useClass: MemoryStorageService },
         { provide: BASE_URL, useValue: null },
         provideHttpClient(withInterceptors([baseUrlInterceptor])),
         provideHttpClientTesting(),
@@ -42,5 +45,14 @@ describe('BaseUrlInterceptor', () => {
 
     http.get('').subscribe(data => expect(data).toEqual({ success: true }));
     httpMock.expectOne(baseUrl).flush({ success: true });
+  });
+
+  it('should prepend stored key when base url from env is empty', () => {
+    setBaseUrl(null);
+    const store = TestBed.inject(LocalStorageService);
+    store.set(API_BASE_URL_STORAGE_KEY, baseUrl);
+
+    http.get('/user').subscribe(data => expect(data).toEqual({ success: true }));
+    httpMock.expectOne(baseUrl + '/user').flush({ success: true });
   });
 });

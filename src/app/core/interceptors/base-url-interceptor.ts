@@ -1,5 +1,10 @@
 import { HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { InjectionToken, inject } from '@angular/core';
+import {
+  getStoredApiBaseUrl,
+  normalizeApiBaseUrl,
+} from '@core/authentication';
+import { LocalStorageService } from '@shared';
 
 export const BASE_URL = new InjectionToken<string>('BASE_URL');
 
@@ -8,14 +13,16 @@ export function hasHttpScheme(url: string) {
 }
 
 export function baseUrlInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
-  const baseUrl = inject(BASE_URL, { optional: true });
-
-  const hasScheme = (url: string) => baseUrl && hasHttpScheme(url);
+  const configuredBaseUrl = normalizeApiBaseUrl(inject(BASE_URL, { optional: true }));
+  const storedBaseUrl = getStoredApiBaseUrl(inject(LocalStorageService));
+  const baseUrl = storedBaseUrl || configuredBaseUrl;
 
   const prependBaseUrl = (url: string) =>
     [baseUrl?.replace(/\/$/g, ''), url.replace(/^\.?\//, '')].filter(val => val).join('/');
 
-  return hasScheme(req.url) === false
-    ? next(req.clone({ url: prependBaseUrl(req.url) }))
-    : next(req);
+  if (!baseUrl || hasHttpScheme(req.url)) {
+    return next(req);
+  }
+
+  return next(req.clone({ url: prependBaseUrl(req.url) }));
 }

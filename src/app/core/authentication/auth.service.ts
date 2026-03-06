@@ -33,8 +33,8 @@ export class AuthService {
     return this.tokenService.valid();
   }
 
-  login(username: string, password: string, rememberMe = false) {
-    return this.loginService.login(username, password, rememberMe).pipe(
+  login(email: string, password: string, key: string, rememberMe = false) {
+    return this.loginService.login(email, password, key, rememberMe).pipe(
       tap(token => this.tokenService.set(token)),
       map(() => this.check())
     );
