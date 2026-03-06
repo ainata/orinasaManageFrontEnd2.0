@@ -12,7 +12,11 @@ import { AuthService, SettingsService } from '@core';
   selector: 'app-user',
   template: `
     <button matIconButton [matMenuTriggerFor]="menu">
-      <img class="avatar" [src]="user()?.avatar" width="24" alt="avatar" />
+      @if (avatarUrl()) {
+        <img class="avatar" [src]="avatarUrl()" width="24" alt="avatar" />
+      } @else {
+        <mat-icon class="avatar-icon">account_circle</mat-icon>
+      }
     </button>
 
     <mat-menu #menu="matMenu">
@@ -40,6 +44,13 @@ import { AuthService, SettingsService } from '@core';
       height: 1.5rem;
       border-radius: 50rem;
     }
+
+    .avatar-icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 1.5rem;
+      line-height: 1.5rem;
+    }
   `,
   imports: [RouterLink, MatButtonModule, MatIconModule, MatMenuModule, TranslateModule],
 })
@@ -49,6 +60,11 @@ export class UserButton {
   private readonly settings = inject(SettingsService);
 
   user = toSignal(this.auth.user());
+
+  avatarUrl() {
+    const currentUser = this.user();
+    return currentUser?.avatar || currentUser?.photo || '';
+  }
 
   logout() {
     this.auth.logout().subscribe(() => {

@@ -52,8 +52,8 @@ export class Login implements OnInit {
   showKey = false;
 
   loginForm = this.fb.nonNullable.group({
-    email: ['aina', [Validators.required]],
-    password: ['aina', [Validators.required]],
+    email: ['aina@gmail.com', [Validators.required]],
+    password: ['123Aina456', [Validators.required]],
     key: ['http://localhost:8080', [Validators.required]],
     rememberMe: [false],
   });
@@ -109,29 +109,28 @@ export class Login implements OnInit {
       return;
     }
 
-    this.auth
-      .login(this.email.value, this.password.value, key, this.rememberMe.value)
-      .subscribe({
-        next: () => {
-          this.storedKey = setStoredApiBaseUrl(this.store, key);
-          this.hasStoredKey = !!this.storedKey;
-          this.showKey = !this.hasStoredKey;
-          this.updateKeyValidators();
-          this.router.navigateByUrl('/');
-        },
-        error: (errorRes: HttpErrorResponse) => {
-          if (errorRes.status === 422) {
-            const form = this.loginForm;
-            const errors = errorRes.error.errors;
-            Object.keys(errors).forEach(key => {
-              form.get('email')?.setErrors({
-                remote: errors[key][0],
-              });
+    this.storedKey = setStoredApiBaseUrl(this.store, key);
+    this.hasStoredKey = !!this.storedKey;
+
+    this.auth.login(this.email.value, this.password.value, key, this.rememberMe.value).subscribe({
+      next: () => {
+        this.showKey = !this.hasStoredKey;
+        this.updateKeyValidators();
+        this.router.navigateByUrl('/');
+      },
+      error: (errorRes: HttpErrorResponse) => {
+        if (errorRes.status === 422) {
+          const form = this.loginForm;
+          const errors = errorRes.error.errors;
+          Object.keys(errors).forEach(key => {
+            form.get('email')?.setErrors({
+              remote: errors[key][0],
             });
-          }
-          this.isSubmitting = false;
-        },
-      });
+          });
+        }
+        this.isSubmitting = false;
+      },
+    });
   }
 
   private loadStoredKey() {

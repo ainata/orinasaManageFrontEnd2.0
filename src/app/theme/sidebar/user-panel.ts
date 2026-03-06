@@ -11,7 +11,11 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-user-panel',
   template: `
     <div class="matero-user-panel" routerLink="/profile/overview">
-      <img class="matero-user-panel-avatar" [src]="user()?.avatar" alt="avatar" width="64" />
+      @if (avatarUrl()) {
+        <img class="matero-user-panel-avatar" [src]="avatarUrl()" alt="avatar" width="64" />
+      } @else {
+        <mat-icon class="matero-user-panel-avatar-icon">account_circle</mat-icon>
+      }
       <div class="matero-user-panel-info">
         <h4>{{ user()?.name }}</h4>
         <h5>{{ user()?.email }}</h5>
@@ -25,4 +29,9 @@ import { TranslateModule } from '@ngx-translate/core';
 export class UserPanel {
   private readonly auth = inject(AuthService);
   user = toSignal(this.auth.user());
+
+  avatarUrl() {
+    const currentUser = this.user();
+    return currentUser?.avatar || currentUser?.photo || '';
+  }
 }

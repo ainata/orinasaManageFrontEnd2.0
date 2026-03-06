@@ -35,7 +35,12 @@ export class AuthService {
 
   login(email: string, password: string, key: string, rememberMe = false) {
     return this.loginService.login(email, password, key, rememberMe).pipe(
-      tap(token => this.tokenService.set(token)),
+      tap(token => {
+        this.tokenService.set(token);
+        if (token?.user) {
+          this.user$.next(this.normalizeUser(token.user));
+        }
+      }),
       map(() => this.check())
     );
   }
@@ -74,6 +79,22 @@ export class AuthService {
       return of(this.user$.getValue());
     }
 
-    return this.loginService.user().pipe(tap(user => this.user$.next(user)));
+    const storedUser = this.tokenService.getUser();
+    if (storedUser && !isEmptyObject(storedUser)) {
+      return of(this.normalizeUser(storedUser)).pipe(tap(user => this.user$.next(user)));
+    }
+
+    return this.loginService.user().pipe(tap(user => this.user$.next(this.normalizeUser(user))));
+  }
+
+  private normalizeUser(user: User): User {
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
+    const name = user.name || fullName || user.email || 'unknown';
+
+    return {
+      ...user,
+      name,
+      avatar: user.avatar || user.photo || undefined,
+    };
   }
 }

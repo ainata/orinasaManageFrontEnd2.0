@@ -32,19 +32,23 @@ describe('BaseUrlInterceptor', () => {
   it('should not prepend base url when base url is empty', () => {
     setBaseUrl(null);
 
-    http.get('/user').subscribe(data => expect(data).toEqual({ success: true }));
+    http.get('/api/user').subscribe(data => expect(data).toEqual({ success: true }));
 
-    httpMock.expectOne('/user').flush({ success: true });
+    httpMock.expectOne('/api/user').flush({ success: true });
   });
 
-  it('should prepend base url when request url does not has http scheme', () => {
+  it('should prepend base url when request url is an api path and does not have http scheme', () => {
     setBaseUrl(baseUrl);
 
-    http.get('./user').subscribe(data => expect(data).toEqual({ success: true }));
-    httpMock.expectOne(baseUrl + '/user').flush({ success: true });
+    http.get('./api/user').subscribe(data => expect(data).toEqual({ success: true }));
+    httpMock.expectOne(baseUrl + '/api/user').flush({ success: true });
+  });
 
-    http.get('').subscribe(data => expect(data).toEqual({ success: true }));
-    httpMock.expectOne(baseUrl).flush({ success: true });
+  it('should not prepend base url for non api request like i18n assets', () => {
+    setBaseUrl(baseUrl);
+
+    http.get('i18n/fr.json').subscribe(data => expect(data).toEqual({ success: true }));
+    httpMock.expectOne('i18n/fr.json').flush({ success: true });
   });
 
   it('should prepend stored key when base url from env is empty', () => {
@@ -52,7 +56,16 @@ describe('BaseUrlInterceptor', () => {
     const store = TestBed.inject(LocalStorageService);
     store.set(API_BASE_URL_STORAGE_KEY, baseUrl);
 
-    http.get('/user').subscribe(data => expect(data).toEqual({ success: true }));
-    httpMock.expectOne(baseUrl + '/user').flush({ success: true });
+    http.get('/api/user').subscribe(data => expect(data).toEqual({ success: true }));
+    httpMock.expectOne(baseUrl + '/api/user').flush({ success: true });
+  });
+
+  it('should not prepend stored key for /api/user/menu', () => {
+    setBaseUrl(null);
+    const store = TestBed.inject(LocalStorageService);
+    store.set(API_BASE_URL_STORAGE_KEY, baseUrl);
+
+    http.get('/api/user/menu').subscribe(data => expect(data).toEqual({ success: true }));
+    httpMock.expectOne('/api/user/menu').flush({ success: true });
   });
 });

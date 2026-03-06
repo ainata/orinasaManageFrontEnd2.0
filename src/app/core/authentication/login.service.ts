@@ -22,7 +22,7 @@ export class LoginService {
 
   login(username: string, password: string, key: string, rememberMe = false) {
     const url = this.buildLoginUrl(key);
-    return this.http.post<any>(url, { email: username, password }).pipe(
+    return this.http.post<Token>(url, { email: username, password }).pipe(
       map(res => {
         if (res?.access_token) {
           return res;
@@ -42,18 +42,18 @@ export class LoginService {
   }
 
   refresh(params: Record<string, any>) {
-    return this.http.post<Token>('/auth/refresh', params);
+    return this.http.post<Token>('/api/auth/refresh', params);
   }
 
   logout() {
-    return this.http.post<any>('/auth/logout', {});
+    return this.http.post<any>('/api/auth/logout', {});
   }
 
   user() {
-    return this.http.get<User>('/user');
+    return this.http.get<User>('/api/user');
   }
 
   menu() {
-    return this.http.get<{ menu: Menu[] }>('/user/menu').pipe(map(res => res.menu));
+    return this.http.get<{ menu: Menu[] }>('data/menu.json').pipe(map(res => res.menu));
   }
 }

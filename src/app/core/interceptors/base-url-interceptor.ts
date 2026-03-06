@@ -12,15 +12,27 @@ export function hasHttpScheme(url: string) {
   return new RegExp('^http(s)?://', 'i').test(url);
 }
 
+export function isApiRequestUrl(url: string) {
+  const normalized = url.replace(/^\.?\//, '');
+  return /^api(\/|$)/i.test(normalized);
+}
+
+function shouldUseStoredBaseUrl(url: string) {
+  const normalized = url.replace(/^\.?\//, '');
+  return !/^api\/user\/menu(\/|$|\?)/i.test(normalized);
+}
+
 export function baseUrlInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const configuredBaseUrl = normalizeApiBaseUrl(inject(BASE_URL, { optional: true }));
   const storedBaseUrl = getStoredApiBaseUrl(inject(LocalStorageService));
-  const baseUrl = storedBaseUrl || configuredBaseUrl;
+  const baseUrl = shouldUseStoredBaseUrl(req.url)
+    ? storedBaseUrl || configuredBaseUrl
+    : configuredBaseUrl;
 
   const prependBaseUrl = (url: string) =>
     [baseUrl?.replace(/\/$/g, ''), url.replace(/^\.?\//, '')].filter(val => val).join('/');
 
-  if (!baseUrl || hasHttpScheme(req.url)) {
+  if (!baseUrl || hasHttpScheme(req.url) || !isApiRequestUrl(req.url)) {
     return next(req);
   }
 

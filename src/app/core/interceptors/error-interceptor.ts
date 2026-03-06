@@ -15,6 +15,7 @@ export function errorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
   const router = inject(Router);
   const toast = inject(HotToastService);
   const errorPages = [STATUS.FORBIDDEN, STATUS.NOT_FOUND, STATUS.INTERNAL_SERVER_ERROR];
+  const silentUnauthorizedUrls = ['/api/user', '/api/user/menu', '/user', '/user/menu'];
 
   const getMessage = (error: HttpErrorResponse) => {
     if (error.error?.message) {
@@ -33,6 +34,13 @@ export function errorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
           skipLocationChange: true,
         });
       } else {
+        if (
+          error.status === STATUS.UNAUTHORIZED &&
+          silentUnauthorizedUrls.some(url => req.url.includes(url))
+        ) {
+          return throwError(() => error);
+        }
+
         console.error('ERROR', error);
         toast.error(getMessage(error));
         if (error.status === STATUS.UNAUTHORIZED) {

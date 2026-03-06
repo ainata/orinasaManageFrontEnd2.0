@@ -46,7 +46,7 @@ describe('TokenInterceptor', () => {
   it('should append token when url does not has http scheme', () => {
     init('', 'token');
 
-    const headers = mockRequest('/user', user).request.headers;
+    const headers = mockRequest('/api/user', user).request.headers;
 
     expect(headers.get('Authorization')).toEqual('Bearer token');
   });
@@ -54,7 +54,7 @@ describe('TokenInterceptor', () => {
   it('should append token when url does not has http and base url not empty', () => {
     init(baseUrl, 'token');
 
-    const headers = mockRequest('/user', user).request.headers;
+    const headers = mockRequest('/api/user', user).request.headers;
 
     expect(headers.get('Authorization')).toEqual('Bearer token');
   });
@@ -62,9 +62,17 @@ describe('TokenInterceptor', () => {
   it('should append token when url include base url', () => {
     init(baseUrl, 'token');
 
-    const headers = mockRequest(`${baseUrl}/user`, user).request.headers;
+    const headers = mockRequest(`${baseUrl}/api/user`, user).request.headers;
 
     expect(headers.get('Authorization')).toEqual('Bearer token');
+  });
+
+  it('should not append token for non-api local url', () => {
+    init('', 'token');
+
+    const headers = mockRequest('/i18n/fr.json', { hello: 'bonjour' }).request.headers;
+
+    expect(headers.has('Authorization')).toBeFalse();
   });
 
   it('should not append token when url not include baseUrl', () => {
@@ -87,7 +95,7 @@ describe('TokenInterceptor', () => {
     init('', 'token');
     spyOn(tokenService, 'clear');
 
-    mockRequest('/user', {}, { status: STATUS.UNAUTHORIZED, statusText: 'Unauthorized' });
+    mockRequest('/api/user', {}, { status: STATUS.UNAUTHORIZED, statusText: 'Unauthorized' });
 
     expect(tokenService.clear).toHaveBeenCalled();
   });
@@ -97,7 +105,7 @@ describe('TokenInterceptor', () => {
     const navigateByUrl = spyOn(router, 'navigateByUrl');
     navigateByUrl.and.returnValue(Promise.resolve(true));
 
-    mockRequest('/auth/logout');
+    mockRequest('/api/auth/logout');
 
     expect(navigateByUrl).toHaveBeenCalledWith('/auth/login');
   });
@@ -107,7 +115,7 @@ describe('TokenInterceptor', () => {
     const navigateByUrl = spyOn(router, 'navigateByUrl');
     navigateByUrl.and.returnValue(Promise.resolve(true));
 
-    mockRequest('/auth/logout');
+    mockRequest('/api/auth/logout');
 
     expect(navigateByUrl).toHaveBeenCalledWith('/auth/login');
   });

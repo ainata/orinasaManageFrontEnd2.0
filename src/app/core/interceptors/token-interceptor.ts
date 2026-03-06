@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { getStoredApiBaseUrl, normalizeApiBaseUrl, TokenService } from '@core/authentication';
 import { LocalStorageService } from '@shared';
 import { catchError, tap, throwError } from 'rxjs';
-import { BASE_URL, hasHttpScheme } from './base-url-interceptor';
+import { BASE_URL, hasHttpScheme, isApiRequestUrl } from './base-url-interceptor';
 
 export function tokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const router = inject(Router);
@@ -20,7 +20,8 @@ export function tokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
     return new RegExp(`^${baseUrl.replace(/\/$/, '')}`, 'i').test(url);
   };
 
-  const shouldAppendToken = (url: string) => !hasHttpScheme(url) || includeBaseUrl(url);
+  const shouldAppendToken = (url: string) =>
+    includeBaseUrl(url) || (!hasHttpScheme(url) && isApiRequestUrl(url));
 
   const handler = () => {
     if (req.url.includes('/auth/logout')) {

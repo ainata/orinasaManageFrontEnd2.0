@@ -20,6 +20,10 @@ export abstract class BaseToken {
     return this.attributes.exp;
   }
 
+  get user() {
+    return this.attributes['user'];
+  }
+
   valid() {
     return this.hasAccessToken() && !this.isExpired();
   }
