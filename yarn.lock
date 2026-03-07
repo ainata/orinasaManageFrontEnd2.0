@@ -266,6 +266,13 @@
   dependencies:
     "@angular-eslint/bundled-angular-compiler" "21.1.0"
 
+"@angular/animations@21.0.3":
+  version "21.0.3"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-21.0.3.tgz#48cc3e254beeb837a53b7409a783f61b9b54ab20"
+  integrity sha512-iuf/ss/8nabJg4QgEVBQQ0LAiyjo+XYUjxcuvvUELKLVw6xc2W+3p4gsWJsBjyGeaYUfFtIg9atArzlt/XFU7g==
+  dependencies:
+    tslib "^2.3.0"
+
 "@angular/build@^21.0.2":
   version "21.0.2"
   resolved "https://registry.npmjs.org/@angular/build/-/build-21.0.2.tgz"
@@ -1678,13 +1685,6 @@
   version "17.0.0"
   resolved "https://registry.npmjs.org/@ngx-translate/http-loader/-/http-loader-17.0.0.tgz"
   integrity sha512-hgS8sa0ARjH9ll3PhkLTufeVXNI2DNR2uFKDhBgq13siUXzzVr/a31M6zgecrtwbA34iaBV01hsTMbMS8V7iIw==
-  dependencies:
-    tslib "^2.3.0"
-
-"@ngxpert/hot-toast@6.1.0":
-  version "6.1.0"
-  resolved "https://registry.npmjs.org/@ngxpert/hot-toast/-/hot-toast-6.1.0.tgz"
-  integrity sha512-eD0kYsoi7/lkdxnHuBfdAM0NeInMAjWQHHJgKlkInGn60tmcGjFGWow7l/ZPOdZEjKq4ARhDsA7yDrXMG4J+UQ==
   dependencies:
     tslib "^2.3.0"
 
@@ -5910,6 +5910,13 @@ ngx-progressbar@^14.0.0:
   dependencies:
     tslib "^2.3.0"
 
+ngx-toastr@^20.0.5:
+  version "20.0.5"
+  resolved "https://registry.yarnpkg.com/ngx-toastr/-/ngx-toastr-20.0.5.tgz#8e7c1855f637e49a4513f74cdfc46808a3bb3084"
+  integrity sha512-JcGu1Cbl+0SovPhxma72ygGeZHtpHWWKwBCyiabb+MSWYtXu/SOwEZ2HTWtZ4wcEYOOiy9tDQZgiEKWXpibpRw==
+  dependencies:
+    tslib "^2.8.1"
+
 node-addon-api@^6.1.0:
   version "6.1.0"
   resolved "https://registry.npmjs.org/node-addon-api/-/node-addon-api-6.1.0.tgz"
@@ -6478,18 +6485,9 @@ postcss-value-parser@^4.2.0:
   resolved "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz"
   integrity sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==
 
-postcss@^8.4.49, postcss@^8.5.3:
+postcss@^8.4.49, postcss@^8.5.3, postcss@^8.5.6:
   version "8.5.6"
   resolved "https://registry.npmjs.org/postcss/-/postcss-8.5.6.tgz"
-  integrity sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==
-  dependencies:
-    nanoid "^3.3.11"
-    picocolors "^1.1.1"
-    source-map-js "^1.2.1"
-
-postcss@^8.5.6:
-  version "8.5.6"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.5.6.tgz#2825006615a619b4f62a9e7426cc120b349a8f3c"
   integrity sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==
   dependencies:
     nanoid "^3.3.11"

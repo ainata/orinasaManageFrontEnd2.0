@@ -66,7 +66,9 @@
             mat-icon-button
             type="button"
             (click)="onKeyButtonClick()"
-            [matTooltip]="hasStoredKey ? 'Effacer Cle sauvegardee' : showKey ? 'Masquer Cle' : 'Afficher Cle'"
+            [matTooltip]="
+              hasStoredKey ? 'Effacer Cle sauvegardee' : showKey ? 'Masquer Cle' : 'Afficher Cle'
+            "
           >
             <mat-icon>vpn_key</mat-icon>
           </button>
@@ -74,13 +76,15 @@
             class="flex-1 d-flex w-full justify-center items-center"
             matButton="filled"
             type="submit"
-            [disabled]="!!loginForm.invalid"
           >
-            @if (!isSubmitting) {
+            <span [style.display]="isSubmitting ? 'none' : 'inline'">
               {{ 'login' | translate }}
-            } @else {
-              <mat-spinner diameter="24" class="text-white"></mat-spinner>
-            }
+            </span>
+            <mat-spinner
+              diameter="24"
+              class="text-white"
+              [style.display]="isSubmitting ? 'inline-block' : 'none'"
+            ></mat-spinner>
           </button>
         </div>
       </form>

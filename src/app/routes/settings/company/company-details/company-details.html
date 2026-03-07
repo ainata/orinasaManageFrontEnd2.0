@@ -1,0 +1,53 @@
+<page-header class="bg-blue-40" />
+<div class="sm:p-6 w-full max-w-screen-xl mx-auto">
+  <mat-card class="company-details-card">
+    <div class="header-row">
+      <h2>Company Details</h2>
+      <button class="back-btn" (click)="backToList()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="state">Loading...</div>
+    } @else if (!company()) {
+      <div class="state">Company not found.</div>
+    } @else {
+      <div class="details-grid">
+        <div class="item"><span>ID:</span> {{ company()!.id }}</div>
+        <div class="item"><span>Code:</span> {{ company()!.code }}</div>
+        <div class="item"><span>Name:</span> {{ company()!.name || '-' }}</div>
+        <div class="item"><span>Domain:</span> {{ company()!.domain }}</div>
+        <div class="item"><span>Email:</span> {{ company()!.email || '-' }}</div>
+        <div class="item"><span>Phone:</span> {{ company()!.phone || '-' }}</div>
+        <div class="item">
+          <span>Status:</span>
+          @if (company()!.enabled) {
+            <mat-icon color="primary">check</mat-icon>
+          } @else {
+            <mat-icon style="color: #9e9e9e">close</mat-icon>
+          }
+        </div>
+        <div class="item"><span>Created:</span> {{ company()!.createdAt }}</div>
+        <div class="item"><span>Updated:</span> {{ company()!.updatedAt }}</div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Settings</h3>
+        @if (settings().length === 0) {
+          <div class="state">No settings.</div>
+        } @else {
+          <div class="settings-list">
+            @for (setting of settings(); track setting.id) {
+              <div class="settings-item">
+                <div class="settings-key">{{ setting.settingKey }}</div>
+                <div class="settings-value">{{ setting.settingValue ?? '-' }}</div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </mat-card>
+</div>

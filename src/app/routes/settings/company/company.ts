@@ -1,56 +1,23 @@
-import { Component, computed, inject, signal, ViewChild } from '@angular/core';
-import { PageHeader } from '@shared';
-import { MatCard, MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
+import { Component, ViewChild, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { catchError, of } from 'rxjs';
+
+import { NotificationService } from '@core';
+import { PageHeader } from '@shared';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog';
-
-export interface Company {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  city: string;
-}
-
-const MOCK_DATA: Company[] = [
-  {
-    id: 1,
-    name: 'TechNova',
-    email: 'contact@technova.com',
-    phone: '+261 34 12 345 67',
-    city: 'Antananarivo',
-  },
-  {
-    id: 2,
-    name: 'GreenSoft',
-    email: 'info@greensoft.io',
-    phone: '+261 33 98 765 43',
-    city: 'Toamasina',
-  },
-  {
-    id: 3,
-    name: 'BlueOcean',
-    email: 'hello@blueocean.mg',
-    phone: '+261 32 45 123 89',
-    city: 'Mahajanga',
-  },
-  {
-    id: 4,
-    name: 'SmartBuild',
-    email: 'admin@smartbuild.mg',
-    phone: '+261 34 77 888 22',
-    city: 'Fianarantsoa',
-  },
-];
+import { Company, CompanyService } from './company.service';
 
 @Component({
   selector: 'app-company',
@@ -60,10 +27,12 @@ const MOCK_DATA: Company[] = [
     FormsModule,
     MatTableModule,
     MatInputModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
     MatCardModule,
-    MatPaginator,
+    MatPaginatorModule,
+    MatSortModule,
     MatDialogModule,
     TranslateModule,
   ],
@@ -71,17 +40,42 @@ const MOCK_DATA: Company[] = [
   styleUrl: './company.scss',
 })
 export class CompanyComponent {
-  displayedColumns: string[] = ['id', 'name', 'email', 'phone', 'city'];
-  dataSource = new MatTableDataSource(MOCK_DATA);
+  private readonly companyService = inject(CompanyService);
+  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
+  private readonly notify = inject(NotificationService);
 
-  private dialog = inject(MatDialog);
+  displayedColumns: string[] = [
+    'enabled',
+    'id',
+    'code',
+    'name',
+    'domain',
+    'email',
+    'phone',
+    'action',
+  ];
+  dataSource = new MatTableDataSource<Company>([]);
+  isLoading = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  ngOnInit() {
+    this.loadCompanies();
+  }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.dataSource.filterPredicate = (company, filter) => {
+      const term = filter.trim().toLowerCase();
+      return [company.name, company.code, company.domain, company.email, company.phone]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(term);
+    };
   }
 
   applyFilter(event: Event) {
@@ -96,13 +90,34 @@ export class CompanyComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Ajouter le nouveau company à ton dataSource
-        const data = this.dataSource.data;
-        const newId = data.length ? Math.max(...data.map(c => c.id)) + 1 : 1;
-        data.push({ id: newId, ...result });
-        this.dataSource.data = [...data]; // update table
+      if (!result) {
+        return;
       }
+
+      const data = this.dataSource.data;
+      data.push(result as Company);
+      this.dataSource.data = [...data];
+      this.notify.success('Societe creee avec succes');
     });
+  }
+
+  openCompanyDetails(id: number) {
+    this.router.navigate(['/settings/company', id]);
+  }
+
+  private loadCompanies() {
+    this.isLoading = true;
+    this.companyService
+      .getCompanies()
+      .pipe(
+        catchError(error => {
+          this.notify.error(this.notify.getErrorMessage(error, 'Impossible de charger les societes'));
+          return of([]);
+        })
+      )
+      .subscribe(companies => {
+        this.dataSource.data = companies;
+        this.isLoading = false;
+      });
   }
 }

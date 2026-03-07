@@ -11,7 +11,6 @@
         justify-content: space-between;
       "
     >
-      <!-- Search -->
       <mat-form-field
         subscriptSizing="dynamic"
         appearance="outline"
@@ -19,11 +18,10 @@
         style="flex: 1; min-width: 250px; max-width: 400px"
       >
         <mat-label>Rechercher</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Nom, email, ville" />
+        <input matInput (keyup)="applyFilter($event)" placeholder="Nom, code, domaine, email" />
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
 
-      <!-- Ajouter Button -->
       <button
         (click)="openAddCompanyModal()"
         mat-flat-button
@@ -38,41 +36,66 @@
 
     <div class="table-container">
       <table mat-table [dataSource]="dataSource" matSort>
-        <!-- ID -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
           <td mat-cell *matCellDef="let element">{{ element.id }}</td>
         </ng-container>
 
-        <!-- Name -->
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
+          <td mat-cell *matCellDef="let element">{{ element.code }}</td>
+        </ng-container>
+
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
           <td mat-cell *matCellDef="let element">{{ element.name }}</td>
         </ng-container>
 
-        <!-- Email -->
+        <ng-container matColumnDef="domain">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Domaine</th>
+          <td mat-cell *matCellDef="let element">{{ element.domain }}</td>
+        </ng-container>
+
         <ng-container matColumnDef="email">
           <th mat-header-cell *matHeaderCellDef>Email</th>
           <td mat-cell *matCellDef="let element">{{ element.email }}</td>
         </ng-container>
 
-        <!-- Phone -->
         <ng-container matColumnDef="phone">
-          <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+          <th mat-header-cell *matHeaderCellDef>Telephone</th>
           <td mat-cell *matCellDef="let element">{{ element.phone }}</td>
         </ng-container>
 
-        <!-- City -->
-        <ng-container matColumnDef="city">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Ville</th>
-          <td mat-cell *matCellDef="let element">{{ element.city }}</td>
+        <ng-container matColumnDef="enabled">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Actif</th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.enabled) {
+              <mat-icon color="primary">check</mat-icon>
+            } @else {
+              <mat-icon style="color: #9e9e9e">close</mat-icon>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="primary" (click)="openCompanyDetails(element.id)">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
+
+      @if (isLoading) {
+        <div class="p-4 text-center">Loading...</div>
+      }
     </div>
 
     <mat-paginator [pageSize]="5"></mat-paginator>
   </mat-card>
 </div>
+

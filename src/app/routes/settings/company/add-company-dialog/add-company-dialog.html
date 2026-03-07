@@ -28,7 +28,12 @@
     <button mat-stroked-button mat-dialog-close>
       {{ 'cancel' | translate }}
     </button>
-    <button mat-flat-button color="accent" (click)="onSubmit()" [disabled]="!companyForm.valid">
+    <button
+      mat-flat-button
+      color="accent"
+      (click)="onSubmit()"
+      [disabled]="!companyForm.valid || isSubmitting"
+    >
       {{ 'save' | translate }}
     </button>
   </div>

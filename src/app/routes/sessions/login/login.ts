@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, NgZone, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,7 +12,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { MtxButtonModule } from '@ng-matero/extensions/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { finalize, tap } from 'rxjs';
 import { LocalStorageService } from '@shared';
+import { NotificationService } from '@core';
 
 import {
   AuthService,
@@ -20,6 +22,8 @@ import {
   getStoredApiBaseUrl,
   setStoredApiBaseUrl,
 } from '@core/authentication';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -45,6 +49,10 @@ export class Login implements OnInit {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly store = inject(LocalStorageService);
+  private readonly notify = inject(NotificationService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly toastr = inject(ToastrService);
+  private readonly zone = inject(NgZone);
 
   isSubmitting = false;
   hasStoredKey = false;
@@ -89,6 +97,9 @@ export class Login implements OnInit {
   }
 
   login() {
+    this.zone.run(() => {
+      this.toastr.info('login en cours', 'login');
+    });
     if (this.isSubmitting) {
       return;
     }
@@ -98,39 +109,35 @@ export class Login implements OnInit {
       return;
     }
 
-    this.isSubmitting = true;
-
     const key = this.resolveApiKey();
     if (!key) {
       this.showKey = true;
       this.updateKeyValidators();
       this.key.setErrors({ required: true });
-      this.isSubmitting = false;
       return;
     }
 
+    this.isSubmitting = true;
     this.storedKey = setStoredApiBaseUrl(this.store, key);
     this.hasStoredKey = !!this.storedKey;
 
-    this.auth.login(this.email.value, this.password.value, key, this.rememberMe.value).subscribe({
-      next: () => {
-        this.showKey = !this.hasStoredKey;
-        this.updateKeyValidators();
-        this.router.navigateByUrl('/');
-      },
-      error: (errorRes: HttpErrorResponse) => {
-        if (errorRes.status === 422) {
-          const form = this.loginForm;
-          const errors = errorRes.error.errors;
-          Object.keys(errors).forEach(key => {
-            form.get('email')?.setErrors({
-              remote: errors[key][0],
-            });
-          });
-        }
-        this.isSubmitting = false;
-      },
-    });
+    this.auth
+      .login(this.email.value, this.password.value, key, this.rememberMe.value)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap({
+          next: () => {
+            this.showKey = !this.hasStoredKey;
+            this.updateKeyValidators();
+            this.notify.success('Connexion reussie');
+            this.router.navigateByUrl('/');
+          },
+          error: (errorRes: HttpErrorResponse) => {
+            this.notify.error(this.notify.getErrorMessage(errorRes, 'Echec de la connexion'));
+          },
+        })
+      )
+      .subscribe();
   }
 
   private loadStoredKey() {
