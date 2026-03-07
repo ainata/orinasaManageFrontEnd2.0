@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, NgZone, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, NgZone, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,7 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { MtxButtonModule } from '@ng-matero/extensions/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { finalize, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { LocalStorageService } from '@shared';
 import { NotificationService } from '@core';
 
@@ -54,10 +54,10 @@ export class Login implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly zone = inject(NgZone);
 
-  isSubmitting = false;
-  hasStoredKey = false;
-  storedKey = '';
-  showKey = false;
+  isSubmitting = signal(false);
+  hasStoredKey = signal(false);
+  storedKey = signal('');
+  showKey = signal(false);
 
   loginForm = this.fb.nonNullable.group({
     email: ['aina@gmail.com', [Validators.required]],
@@ -87,12 +87,12 @@ export class Login implements OnInit {
   }
 
   onKeyButtonClick() {
-    if (this.hasStoredKey) {
+    if (this.hasStoredKey()) {
       this.clearStoredKey();
       return;
     }
 
-    this.showKey = !this.showKey;
+    this.showKey.update(value => !value);
     this.updateKeyValidators();
   }
 
@@ -100,7 +100,7 @@ export class Login implements OnInit {
     this.zone.run(() => {
       this.toastr.info('login en cours', 'login');
     });
-    if (this.isSubmitting) {
+    if (this.isSubmitting()) {
       return;
     }
 
@@ -111,15 +111,15 @@ export class Login implements OnInit {
 
     const key = this.resolveApiKey();
     if (!key) {
-      this.showKey = true;
+      this.showKey.set(true);
       this.updateKeyValidators();
       this.key.setErrors({ required: true });
       return;
     }
 
-    this.isSubmitting = true;
-    this.storedKey = setStoredApiBaseUrl(this.store, key);
-    this.hasStoredKey = !!this.storedKey;
+    this.isSubmitting.set(true);
+    this.storedKey.set(setStoredApiBaseUrl(this.store, key));
+    this.hasStoredKey.set(!!this.storedKey());
 
     this.auth
       .login(this.email.value, this.password.value, key, this.rememberMe.value)
@@ -127,13 +127,15 @@ export class Login implements OnInit {
         takeUntilDestroyed(this.destroyRef),
         tap({
           next: () => {
-            this.showKey = !this.hasStoredKey;
+            this.showKey.set(!this.hasStoredKey());
             this.updateKeyValidators();
             this.notify.success('Connexion reussie');
             this.router.navigateByUrl('/');
+            this.isSubmitting.set(false);
           },
           error: (errorRes: HttpErrorResponse) => {
             this.notify.error(this.notify.getErrorMessage(errorRes, 'Echec de la connexion'));
+            this.isSubmitting.set(false);
           },
         })
       )
@@ -141,12 +143,12 @@ export class Login implements OnInit {
   }
 
   private loadStoredKey() {
-    this.storedKey = getStoredApiBaseUrl(this.store);
-    this.hasStoredKey = !!this.storedKey;
-    this.showKey = !this.hasStoredKey;
+    this.storedKey.set(getStoredApiBaseUrl(this.store));
+    this.hasStoredKey.set(!!this.storedKey());
+    this.showKey.set(!this.hasStoredKey());
 
-    if (this.hasStoredKey) {
-      this.key.setValue(this.storedKey);
+    if (this.hasStoredKey()) {
+      this.key.setValue(this.storedKey());
     }
 
     this.updateKeyValidators();
@@ -154,15 +156,15 @@ export class Login implements OnInit {
 
   private clearStoredKey() {
     clearStoredApiBaseUrl(this.store);
-    this.storedKey = '';
-    this.hasStoredKey = false;
-    this.showKey = true;
+    this.storedKey.set('');
+    this.hasStoredKey.set(false);
+    this.showKey.set(true);
     this.key.setValue('');
     this.updateKeyValidators();
   }
 
   private updateKeyValidators() {
-    if (this.showKey) {
+    if (this.showKey()) {
       this.key.setValidators([Validators.required]);
     } else {
       this.key.clearValidators();
@@ -171,6 +173,6 @@ export class Login implements OnInit {
   }
 
   private resolveApiKey() {
-    return this.hasStoredKey ? this.storedKey : this.key.value.trim();
+    return this.hasStoredKey() ? this.storedKey() : this.key.value.trim();
   }
 }

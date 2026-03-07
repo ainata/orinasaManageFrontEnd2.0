@@ -1,4 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+/* Sass modules */
 @use 'styles/reboot';
 @use 'styles/themes';
 @use 'styles/colors';
@@ -6,10 +6,16 @@
 @use 'styles/helpers';
 @use 'styles/plugins';
 @use 'styles/custom';
+
+/* ngx-toastr styles */
+@use 'ngx-toastr/toastr';
+
+/* Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Dialog Material */
 .mat-mdc-dialog-container {
   border-radius: 2px !important;
   padding: 24px !important;
@@ -17,7 +23,7 @@
 
 .mdc-dialog__surface {
   border-radius: 2px !important;
-  padding: 0 0 0 0 !important;
+  padding: 0 !important;
 }
 
 .mat-mdc-dialog-title {
@@ -25,11 +31,43 @@
 }
 
 .mat-mdc-dialog-content {
-  padding: 0 0 !important;
+  padding: 0 !important;
   margin: 0 !important;
 }
 
 .mat-mdc-dialog-actions {
   padding: 0 16px 8px 8px !important;
   margin: 0 !important;
+}
+
+/* Notification popups */
+#toast-container.toast-top-right {
+  top: 16px;
+  right: 16px;
+}
+
+#toast-container {
+  z-index: 99999;
+}
+
+#toast-container .ngx-toastr {
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+#toast-container .ngx-toastr.toast-success {
+  background-color: #1f9d55;
+}
+
+#toast-container .ngx-toastr.toast-error {
+  background-color: #d64545;
+}
+
+#toast-container .ngx-toastr.toast-info {
+  background-color: #2c7be5;
+}
+
+#toast-container .ngx-toastr.toast-warning {
+  background-color: #e6a700;
+  color: #1f2328;
 }

@@ -1,18 +1,35 @@
 import { Injectable, inject } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
+import { IndividualConfig, ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationService {
   private readonly toastr = inject(ToastrService);
+  private readonly toastOptions: Partial<IndividualConfig> = {
+    positionClass: 'toast-top-right',
+
+    timeOut: 3000,
+    closeButton: true,
+    progressBar: true,
+    newestOnTop: true,
+    easeTime: 300,
+  };
 
   success(message: string, title = 'Succes') {
-    this.toastr.success(message, title);
+    this.toastr.success(message, title, this.toastOptions);
   }
 
   error(message: string, title = 'Erreur') {
-    this.toastr.error(message, title);
+    this.toastr.error(message, title, this.toastOptions);
+  }
+
+  info(message: string, title = 'Information') {
+    this.toastr.info(message, title, this.toastOptions);
+  }
+
+  warning(message: string, title = 'Attention') {
+    this.toastr.warning(message, title, this.toastOptions);
   }
 
   getErrorMessage(error: unknown, fallback = 'Une erreur est survenue') {

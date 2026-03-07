@@ -40,7 +40,7 @@
           }
         </mat-form-field>
 
-        @if (showKey) {
+        @if (showKey()) {
           <mat-form-field appearance="outline">
             <mat-label>Cle</mat-label>
             <input matInput placeholder="" type="text" formControlName="key" />
@@ -67,7 +67,7 @@
             type="button"
             (click)="onKeyButtonClick()"
             [matTooltip]="
-              hasStoredKey ? 'Effacer Cle sauvegardee' : showKey ? 'Masquer Cle' : 'Afficher Cle'
+              hasStoredKey() ? 'Effacer Cle sauvegardee' : showKey() ? 'Masquer Cle' : 'Afficher Cle'
             "
           >
             <mat-icon>vpn_key</mat-icon>
@@ -77,14 +77,13 @@
             matButton="filled"
             type="submit"
           >
-            <span [style.display]="isSubmitting ? 'none' : 'inline'">
-              {{ 'login' | translate }}
-            </span>
-            <mat-spinner
-              diameter="24"
-              class="text-white"
-              [style.display]="isSubmitting ? 'inline-block' : 'none'"
-            ></mat-spinner>
+            @if (!isSubmitting()) {
+              <span>
+                {{ 'login' | translate }}
+              </span>
+            } @else {
+              <mat-spinner diameter="24" class="text-white"></mat-spinner>
+            }
           </button>
         </div>
       </form>
