@@ -1,8 +1,7 @@
-<page-header class="bg-blue-40" />
 <div class="sm:p-6 w-full max-w-screen-xl mx-auto">
   <mat-card class="company-details-card">
     <div class="header-row">
-      <h2>Company Details</h2>
+      <h4>Company Details</h4>
       <button class="back-btn" (click)="backToList()">
         <mat-icon>arrow_back</mat-icon>
         Back
@@ -10,44 +9,140 @@
     </div>
 
     @if (isLoading()) {
-      <div class="state">Loading...</div>
+      <div class="state">Chargement...</div>
     } @else if (!company()) {
-      <div class="state">Company not found.</div>
+      <div class="state">Aucune societe trouvee.</div>
     } @else {
-      <div class="details-grid">
-        <div class="item"><span>ID:</span> {{ company()!.id }}</div>
-        <div class="item"><span>Code:</span> {{ company()!.code }}</div>
-        <div class="item"><span>Name:</span> {{ company()!.name || '-' }}</div>
-        <div class="item"><span>Domain:</span> {{ company()!.domain }}</div>
-        <div class="item"><span>Email:</span> {{ company()!.email || '-' }}</div>
-        <div class="item"><span>Phone:</span> {{ company()!.phone || '-' }}</div>
-        <div class="item">
-          <span>Status:</span>
-          @if (company()!.enabled) {
-            <mat-icon color="primary">check</mat-icon>
-          } @else {
-            <mat-icon style="color: #9e9e9e">close</mat-icon>
-          }
-        </div>
-        <div class="item"><span>Created:</span> {{ company()!.createdAt }}</div>
-        <div class="item"><span>Updated:</span> {{ company()!.updatedAt }}</div>
-      </div>
+      <form [formGroup]="companyForm" (ngSubmit)="saveCompany()" class="edit-form">
+        <div class="details-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Code</mat-label>
+            <input matInput formControlName="code" />
+            @if (companyForm.controls.code.invalid && companyForm.controls.code.touched) {
+              <mat-error>Le code est obligatoire</mat-error>
+            }
+          </mat-form-field>
 
-      <div class="settings-section">
-        <h3>Settings</h3>
-        @if (settings().length === 0) {
-          <div class="state">No settings.</div>
-        } @else {
-          <div class="settings-list">
-            @for (setting of settings(); track setting.id) {
-              <div class="settings-item">
-                <div class="settings-key">{{ setting.settingKey }}</div>
-                <div class="settings-value">{{ setting.settingValue ?? '-' }}</div>
-              </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Domaine</mat-label>
+            <input matInput formControlName="domain" />
+            @if (companyForm.controls.domain.invalid && companyForm.controls.domain.touched) {
+              <mat-error>Le domaine est obligatoire</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="toggle-col">
+            <mat-label>Statut</mat-label>
+            <mat-slide-toggle formControlName="enabled">
+              {{ companyForm.controls.enabled.value ? 'Active' : 'Inactive' }}
+            </mat-slide-toggle>
+          </div>
+        </div>
+
+        <div class="meta-row">
+          <div>
+            <strong>ID:</strong>
+            {{ company()?.id }}
+          </div>
+          <div>
+            <strong>Cree le:</strong>
+            {{ company()?.createdAt | date: 'dd MMM yyyy HH:mm' }}
+          </div>
+          <div>
+            <strong>Modifie le:</strong>
+            {{ company()?.updatedAt | date: 'dd MMM yyyy HH:mm' }}
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-header">
+            <h4>Company Settings</h4>
+            <span class="header-divider"></span>
+            <button mat-stroked-button type="button" (click)="addSetting()">
+              Ajouter un setting
+            </button>
+          </div>
+
+          <div formArrayName="settings">
+            @if (settingsByCategory().length === 0) {
+              <div class="state">Aucun setting.</div>
+            } @else {
+              <mat-tab-group>
+                @for (group of settingsByCategory(); track group.category) {
+                  <mat-tab [label]="group.category">
+                    <div class="settings-list grid-4">
+                      @for (setting of group.items; track setting.index) {
+                        <div class="settings-item" [formGroupName]="setting.index">
+                          @if (isPhoneSetting(setting.index)) {
+                            <mat-form-field appearance="outline" class="settings-field">
+                              <mat-label>{{ normalizeSettingLabel(setting.settingKey) }}</mat-label>
+                              <mat-select
+                                matPrefix
+                                formControlName="phoneIso"
+                                class="phone-iso-prefix"
+                              >
+                                <mat-select-trigger>
+                                  <img
+                                    class="flag-icon"
+                                    [src]="getPhoneFlagUrl(setting.index)"
+                                    alt="phone iso"
+                                  />
+                                </mat-select-trigger>
+                                @for (country of phoneCountries; track country.iso) {
+                                  <mat-option [value]="country.iso">
+                                    <img class="flag-icon" [src]="country.flagUrl" [alt]="country.iso" />
+                                  </mat-option>
+                                }
+                              </mat-select>
+                              <span matTextPrefix>{{ getPhonePrefix(setting.index) }}&nbsp;</span>
+                              <input
+                                matInput
+                                formControlName="settingValue"
+                                type="tel"
+                                [placeholder]="getPhonePlaceholder(setting.index)"
+                                (click)="$event.stopPropagation()"
+                                (input)="onPhoneValueInput(setting.index, $event)"
+                              />
+                              @if (
+                                settingsFormArray.at(setting.index).get('settingValue')?.invalid &&
+                                settingsFormArray.at(setting.index).get('settingValue')?.touched
+                              ) {
+                                <mat-error>Valeur invalide pour ce type de setting</mat-error>
+                              }
+                            </mat-form-field>
+                          } @else {
+                            <mat-form-field appearance="outline" class="settings-field">
+                              <mat-label>{{ normalizeSettingLabel(setting.settingKey) }}</mat-label>
+                              <input
+                                matInput
+                                formControlName="settingValue"
+                                [type]="getInputType(setting.index)"
+                              />
+                              @if (
+                                settingsFormArray.at(setting.index).get('settingValue')?.invalid &&
+                                settingsFormArray.at(setting.index).get('settingValue')?.touched
+                              ) {
+                                <mat-error>Valeur invalide pour ce type de setting</mat-error>
+                              }
+                            </mat-form-field>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </mat-tab>
+                }
+              </mat-tab-group>
             }
           </div>
-        }
-      </div>
+        </div>
+
+        <div class="actions-row">
+          <button mat-stroked-button type="button" (click)="backToList()">Annuler</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="isSaving()">
+            {{ isSaving() ? 'Enregistrement...' : 'Enregistrer' }}
+          </button>
+        </div>
+      </form>
     }
   </mat-card>
 </div>

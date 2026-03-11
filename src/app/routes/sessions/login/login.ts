@@ -60,7 +60,7 @@ export class Login implements OnInit {
   showKey = signal(false);
 
   loginForm = this.fb.nonNullable.group({
-    email: ['aina@gmail.com', [Validators.required]],
+    email: ['andriamitafs@gmail.com', [Validators.required]],
     password: ['123Aina456', [Validators.required]],
     key: ['http://localhost:8080', [Validators.required]],
     rememberMe: [false],
@@ -97,9 +97,6 @@ export class Login implements OnInit {
   }
 
   login() {
-    this.zone.run(() => {
-      this.toastr.info('login en cours', 'login');
-    });
     if (this.isSubmitting()) {
       return;
     }

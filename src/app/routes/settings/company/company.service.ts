@@ -36,6 +36,18 @@ export interface CreateCompanyPayload {
   code: string;
 }
 
+export interface UpdateCompanyPayload {
+  domain: string;
+  enabled: boolean;
+  code: string;
+  settings?: Array<{
+    id?: number;
+    settingKey: string;
+    settingValue: string | null;
+    category?: string | null;
+  }>;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -46,23 +58,19 @@ export class CompanyService {
     return this.http.get<Company[]>('/api/companies');
   }
 
-  getCompanyById(id: number | string) {
-    return this.http
-      .get<Company | { data: Company } | Company[]>(`/api/companies/${id}`)
-      .pipe(
-        map(response => {
-          if (Array.isArray(response)) {
-            return response[0];
-          }
-          if (response && typeof response === 'object' && 'data' in response) {
-            return response.data;
-          }
-          return response;
-        })
-      );
+  getCompanyById(id: number) {
+    return this.http.get<Company>(`/api/companies/${id}`);
   }
 
   createCompany(payload: CreateCompanyPayload) {
     return this.http.post<Company>('/api/companies', payload);
+  }
+
+  updateCompany(id: number | string, payload: UpdateCompanyPayload) {
+    return this.http.put<Company>(`/api/companies/${id}`, payload);
+  }
+
+  createCompanySettings(payload: any) {
+    return this.http.post('/api/company-settings/batch', payload);
   }
 }

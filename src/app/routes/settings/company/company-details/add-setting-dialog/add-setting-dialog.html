@@ -1,0 +1,107 @@
+<!-- <h2 mat-dialog-title>Ajouter un setting</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="add-setting-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        @for (category of categories; track category) {
+          <mat-option [value]="category">{{ category }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Key</mat-label>
+      <input matInput formControlName="settingKey" />
+      @if (form.controls.settingKey.invalid && form.controls.settingKey.touched) {
+        <mat-error>Le key est obligatoire</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Value</mat-label>
+      <input matInput formControlName="settingValue" />
+      @if (form.controls.settingValue.invalid && form.controls.settingValue.touched) {
+        <mat-error>Le value est obligatoire</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="close()">Annuler</button>
+  <button mat-flat-button color="primary" type="button" (click)="submit()">Ajouter</button>
+</mat-dialog-actions>
+ -->
+
+<div class="dialog-container">
+  <!-- Header -->
+  <div class="dialog-header">
+    <h2 mat-dialog-title>Ajouter un setting</h2>
+  </div>
+
+  <!-- Content -->
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category">
+          @for (category of categories; track category) {
+            <mat-option [value]="category">{{ category }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type">
+          @for (type of types; track type) {
+            <mat-option [value]="type">{{ type }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Key</mat-label>
+        <input matInput formControlName="settingKey" />
+        @if (form.controls.settingKey.invalid && form.controls.settingKey.touched) {
+          <mat-error>Le key est obligatoire</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Value</mat-label>
+        @if (form.controls.type.value === 'PHONE') {
+          <mat-select matPrefix formControlName="phoneIso" class="phone-iso-prefix">
+            <mat-select-trigger>
+              <img class="flag-icon" [src]="selectedPhoneFlagUrl" alt="phone iso" />
+            </mat-select-trigger>
+            @for (country of phoneCountries; track country.iso) {
+              <mat-option [value]="country.iso">
+                <img class="flag-icon" [src]="country.flagUrl" [alt]="country.iso" />
+              </mat-option>
+            }
+          </mat-select>
+        }
+        <input
+          matInput
+          formControlName="settingValue"
+          [type]="valueInputType"
+          [placeholder]="form.controls.type.value === 'PHONE' ? phonePlaceholder : ''"
+          (click)="$event.stopPropagation()"
+          (input)="onPhoneValueInput($event)"
+        />
+        @if (form.controls.settingValue.invalid && form.controls.settingValue.touched) {
+          <mat-error>Le value est obligatoire</mat-error>
+        }
+      </mat-form-field>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <mat-dialog-actions>
+    <button mat-stroked-button type="button" (click)="close()">Annuler</button>
+    <button mat-flat-button color="primary" type="button" (click)="submit()">Ajouter</button>
+  </mat-dialog-actions>
+</div>

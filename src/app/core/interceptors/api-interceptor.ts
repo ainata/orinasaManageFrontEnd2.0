@@ -6,9 +6,15 @@ export function apiInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
     return next(req);
   }
 
+  const isCompanyEndpoint = /\/api\/companies(?:\/|$|\?)/.test(req.url);
+
   return next(req).pipe(
     mergeMap((event: HttpEvent<any>) => {
       if (event instanceof HttpResponse) {
+        if (isCompanyEndpoint) {
+          return of(event);
+        }
+
         const body: any = event.body;
         // failure: { code: **, msg: 'failure' }
         // success: { code: 0,  msg: 'success', data: {} }
