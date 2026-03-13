@@ -37,6 +37,38 @@
       }
     },
     {
+      "route": "hr",
+      "name": "hr",
+      "type": "sub",
+      "icon": "people",
+      "children": [
+        {
+          "route": "departments",
+          "name": "departments",
+          "type": "link",
+          "icon": "business"
+        },
+        {
+          "route": "activity",
+          "name": "activity",
+          "type": "link",
+          "icon": "account_balance"
+        },
+        {
+          "route": "position",
+          "name": "position",
+          "type": "link",
+          "icon": "person_pin"
+        },
+        {
+          "route": "employees",
+          "name": "employees",
+          "type": "link",
+          "icon": "person"
+        }
+      ]
+    },
+    {
       "route": "settings",
       "name": "settings",
       "type": "sub",

@@ -5,7 +5,12 @@
     "design.colors": "Système de couleurs",
     "design.icons": "Icônes Material",
     "settings": "Paramètres",
-    "settings.company": "Entreprise"
+    "settings.company": "Entreprise",
+    "hr": "RH",
+    "hr.departments": "Départements",
+    "hr.activity": "Activité",
+    "hr.position": "Poste",
+    "hr.employees": "Employés"
   },
   "validation": {
     "required": "Ce champ est obligatoire",
@@ -43,9 +48,14 @@
   "email": "Email",
   "operation": "Opération",
   "add": "Ajouter",
+  "add_department": "Ajouter un département",
   "edit": "Modifier",
   "delete": "Supprimer",
   "confirm_delete": "Confirmer la suppression ?",
+  "actions": "Actions",
+  "code": "Code",
+  "description": "Description",
+  "no_data": "Aucune donnée à afficher",
   "ok": "OK",
   "close": "Fermer",
   "profile": "Profil",
@@ -67,5 +77,6 @@
   "have_an_account": "Vous avez déjà un compte",
   "restore_defaults": "Restaurer les valeurs par défaut",
   "save": "Enregistrer",
-  "cancel": "Annuler"
+  "cancel": "Annuler",
+  "search": "Rechercher"
 }

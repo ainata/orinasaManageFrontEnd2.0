@@ -5,7 +5,12 @@
     "design.colors": "Color System",
     "design.icons": "Material Icons",
     "settings": "Settings",
-    "settings.company":"Company"
+    "settings.company":"Company",
+    "hr": "Human Resources",
+    "hr.departments": "Departments",
+    "hr.activity": "Activity",
+    "hr.position": "Position",
+    "hr.employees": "Employees"
   },
   "validation": {
     "required": "This field is required",
