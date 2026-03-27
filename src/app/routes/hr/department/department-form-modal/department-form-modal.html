@@ -1,0 +1,52 @@
+<div class="dialog-container">
+  <!-- Header -->
+  <div class="dialog-header">
+    <h2 mat-dialog-title>{{ (isEdit ? 'edit_department' : 'add_department') | translate }}</h2>
+  </div>
+
+  <!-- Content -->
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" class="form-grid">
+      <!-- Code -->
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field">
+        <mat-label>Code</mat-label>
+        <input matInput formControlName="code" placeholder="Code du département" />
+        <mat-icon matPrefix>code</mat-icon>
+      </mat-form-field>
+
+      <!-- Name -->
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field">
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="name" placeholder="Nom du département" />
+        <mat-icon matPrefix>business</mat-icon>
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field full-width">
+        <mat-label>Description</mat-label>
+        <textarea
+          matInput
+          formControlName="description"
+          placeholder="Description du département"
+        ></textarea>
+        <mat-icon matPrefix>description</mat-icon>
+      </mat-form-field>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <div mat-dialog-actions class="dialog-footer">
+    <button mat-stroked-button [mat-dialog-close]="false" type="button">
+      {{ 'cancel' | translate }}
+    </button>
+
+    <button
+      mat-flat-button
+      color="accent"
+      (click)="save()"
+      [disabled]="!form.valid || isSubmitting"
+    >
+      {{ 'save' | translate }}
+    </button>
+  </div>
+</div>

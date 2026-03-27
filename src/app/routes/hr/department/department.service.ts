@@ -15,4 +15,12 @@ export class DepartmentService {
   addDepartment(department: Partial<Department>) {
     return this.http.post<Department>('api/departments', department);
   }
+
+  updateDepartment(id: number, department: Partial<Department>) {
+    return this.http.put<Department>(`api/departments/${id}`, department);
+  }
+
+  deleteDepartment(id: number) {
+    return this.http.delete(`api/departments/${id}`);
+  }
 }

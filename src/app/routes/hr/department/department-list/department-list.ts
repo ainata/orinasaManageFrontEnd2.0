@@ -15,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Department } from '../department.model';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DepartmentFormModal } from '../department-form-modal/department-form-modal';
+import { AuthService } from '@core/authentication';
 
 @Component({
   selector: 'app-department-list',
@@ -38,6 +39,7 @@ import { DepartmentFormModal } from '../department-form-modal/department-form-mo
 })
 export class DepartmentList implements OnInit {
   private readonly departmentService = inject(DepartmentService);
+  private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -49,12 +51,15 @@ export class DepartmentList implements OnInit {
   }
 
   getDepartments() {
-    this.departmentService
-      .getDepartments(4)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(departments => {
-        this.dataSource.data = departments;
-      });
+    const companyId = this.authService.companyId;
+    if (companyId) {
+      this.departmentService
+        .getDepartments(companyId)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(departments => {
+          this.dataSource.data = departments;
+        });
+    }
   }
 
   applyFilter(event: Event) {
@@ -67,9 +72,29 @@ export class DepartmentList implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.getDepartments();
       }
     });
   }
 
-  edit(id: number) {}
+  edit(id: number) {
+    const dialogRef = this.dialog.open(DepartmentFormModal, {
+      data: this.dataSource.data.find(department => department.id === id),
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getDepartments();
+      }
+    });
+  }
+
+  delete(id: number) {
+    this.departmentService
+      .deleteDepartment(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.getDepartments();
+      });
+  }
 }

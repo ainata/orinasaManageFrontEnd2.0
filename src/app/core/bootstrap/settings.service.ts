@@ -11,7 +11,7 @@ import { AppSettings, AppTheme, defaults } from '../settings';
   providedIn: 'root',
 })
 export class SettingsService {
-  private readonly key = 'ng-matero-settings';
+  private readonly key = 'settings';
 
   private readonly document = inject(DOCUMENT);
   private readonly translate = inject(TranslateService);

@@ -1,6 +1,6 @@
 import { LocalStorageService } from '@shared';
 
-export const API_BASE_URL_STORAGE_KEY = 'ng-matero-api-base-url';
+export const API_BASE_URL_STORAGE_KEY = 'api-base-url';
 
 export function normalizeApiBaseUrl(value: unknown): string {
   if (typeof value !== 'string') {

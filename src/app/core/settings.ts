@@ -19,7 +19,7 @@ export const defaults: AppSettings = {
   showHeader: true,
   headerPos: 'fixed',
   showUserPanel: true,
-  sidenavOpened: false,
+  sidenavOpened: true,
   sidenavCollapsed: false,
   language: 'fr',
 };

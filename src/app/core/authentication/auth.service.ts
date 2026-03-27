@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, catchError, iif, map, merge, of, share, switchMap, tap } from 'rxjs';
+import { LocalStorageService } from '@shared';
 import { filterObject, isEmptyObject } from './helpers';
 import { User } from './interface';
 import { LoginService } from './login.service';
@@ -11,7 +12,9 @@ import { TokenService } from './token.service';
 export class AuthService {
   private readonly loginService = inject(LoginService);
   private readonly tokenService = inject(TokenService);
+  private readonly store = inject(LocalStorageService);
 
+  private readonly userStorageKey = 'user';
   private user$ = new BehaviorSubject<User>({});
   private change$ = merge(
     this.tokenService.change(),
@@ -36,9 +39,14 @@ export class AuthService {
   login(email: string, password: string, key: string, rememberMe = false) {
     return this.loginService.login(email, password, key, rememberMe).pipe(
       tap(token => {
-        this.tokenService.set(token);
         if (token?.user) {
+          this.store.set(this.userStorageKey, token.user);
           this.user$.next(this.normalizeUser(token.user));
+          const { user, ...tokenWithoutUser } = token;
+          this.tokenService.set(tokenWithoutUser);
+        } else {
+          this.store.remove(this.userStorageKey);
+          this.tokenService.set(token);
         }
       }),
       map(() => this.check())
@@ -57,13 +65,20 @@ export class AuthService {
 
   logout() {
     return this.loginService.logout().pipe(
-      tap(() => this.tokenService.clear()),
+      tap(() => {
+        this.tokenService.clear();
+        this.store.remove(this.userStorageKey);
+      }),
       map(() => !this.check())
     );
   }
 
   user() {
     return this.user$.pipe(share());
+  }
+
+  get companyId(): number | undefined {
+    return this.user$.getValue()['companyId'];
   }
 
   menu() {
@@ -79,7 +94,7 @@ export class AuthService {
       return of(this.user$.getValue());
     }
 
-    const storedUser = this.tokenService.getUser();
+    const storedUser = this.store.get(this.userStorageKey);
     if (storedUser && !isEmptyObject(storedUser)) {
       return of(this.normalizeUser(storedUser)).pipe(tap(user => this.user$.next(user)));
     }
