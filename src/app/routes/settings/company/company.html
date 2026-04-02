@@ -30,7 +30,7 @@
         style="white-space: nowrap; height: 46px"
       >
         <mat-icon class="mr-2">add</mat-icon>
-        {{ 'add' | translate }}
+        {{ 'add_company' | translate }}
       </button>
     </div>
 
@@ -80,7 +80,12 @@
         <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef>Action</th>
           <td mat-cell *matCellDef="let element">
-            <button mat-icon-button color="primary" (click)="openCompanyDetails(element.id)">
+            <button
+              class="bg-blue-90 hover:bg-blue-80 text-blue-10"
+              mat-icon-button
+              color="primary"
+              (click)="openCompanyDetails(element.id)"
+            >
               <mat-icon>edit</mat-icon>
             </button>
           </td>
@@ -98,4 +103,3 @@
     <mat-paginator [pageSize]="5"></mat-paginator>
   </mat-card>
 </div>
-

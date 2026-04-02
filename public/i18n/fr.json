@@ -49,6 +49,8 @@
   "operation": "Opération",
   "add": "Ajouter",
   "add_department": "Ajouter un département",
+  "add_activity": "Ajouter une activité",
+  "add_company": "Ajouter une entreprise",
   "edit": "Modifier",
   "delete": "Supprimer",
   "confirm_delete": "Confirmer la suppression ?",
