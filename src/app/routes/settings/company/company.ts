@@ -15,14 +15,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { catchError, of } from 'rxjs';
 
 import { NotificationService } from '@core';
-import { PageHeader } from '@shared';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog';
 import { Company, CompanyService } from './company.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-company',
   imports: [
-    PageHeader,
     CommonModule,
     FormsModule,
     MatTableModule,
@@ -32,6 +31,7 @@ import { Company, CompanyService } from './company.service';
     MatIconModule,
     MatCardModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule,
     MatSortModule,
     MatDialogModule,
     TranslateModule,
@@ -111,7 +111,9 @@ export class CompanyComponent {
       .getCompanies()
       .pipe(
         catchError(error => {
-          this.notify.error(this.notify.getErrorMessage(error, 'Impossible de charger les societes'));
+          this.notify.error(
+            this.notify.getErrorMessage(error, 'Impossible de charger les societes')
+          );
           return of([]);
         })
       )

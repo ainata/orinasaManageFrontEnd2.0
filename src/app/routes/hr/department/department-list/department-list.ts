@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,9 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DepartmentService } from '../department.service';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { PageHeader } from '@shared';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,7 +22,6 @@ import { AuthService } from '@core/authentication';
   imports: [
     CommonModule,
     TranslateModule,
-    PageHeader,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -45,6 +43,7 @@ export class DepartmentList implements OnInit {
 
   dataSource = new MatTableDataSource<Department>();
   displayedColumns: string[] = ['id', 'name', 'code', 'description', 'actions'];
+  readonly isLoading = signal<boolean>(false);
 
   ngOnInit(): void {
     this.getDepartments();
@@ -52,12 +51,14 @@ export class DepartmentList implements OnInit {
 
   getDepartments() {
     const companyId = this.authService.companyId;
+    this.isLoading.set(true);
     if (companyId) {
       this.departmentService
         .getDepartments(companyId)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(departments => {
           this.dataSource.data = departments;
+          this.isLoading.set(false);
         });
     }
   }

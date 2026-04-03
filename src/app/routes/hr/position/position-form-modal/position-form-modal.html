@@ -1,1 +1,90 @@
-<p>position-form-modal works!</p>
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      {{ dialogTitle() | translate }}
+    </h2>
+  </div>
+
+  <div mat-dialog-content class="dialog-content">
+    @if (isLoading()) {
+      <div class="flex justify-center py-6">
+        <mat-spinner diameter="36" />
+      </div>
+    } @else {
+      <form [formGroup]="form" class="form-grid">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field">
+          <mat-label>{{ 'name' | translate }}</mat-label>
+          <input matInput formControlName="name" />
+          <mat-icon matPrefix>label</mat-icon>
+
+          @if (hasError('name', 'required')) {
+            <mat-error>{{ 'field_required' | translate }}</mat-error>
+          }
+          @if (hasError('name', 'minlength')) {
+            <mat-error>{{ 'min_length_2' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field">
+          <mat-label>{{ 'code' | translate }}</mat-label>
+          <input matInput formControlName="code" />
+          <mat-icon matPrefix>tag</mat-icon>
+
+          @if (hasError('code', 'required')) {
+            <mat-error>{{ 'field_required' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field full-width">
+          <mat-label>{{ 'activity' | translate }}</mat-label>
+          <mat-select formControlName="activityId">
+            @for (g of deptActivityGroups(); track g.department.id) {
+              @if (g.activities.length > 0) {
+                <mat-optgroup [label]="g.department.name">
+                  @for (act of g.activities; track act.id) {
+                    <mat-option [value]="act.id">{{ act.name }}</mat-option>
+                  }
+                </mat-optgroup>
+              }
+            }
+          </mat-select>
+          <mat-icon matPrefix>category</mat-icon>
+
+          @if (hasError('activityId', 'required')) {
+            <mat-error>{{ 'field_required' | translate }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="form-field full-width"
+        >
+          <mat-label>{{ 'description' | translate }}</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+          <mat-icon matPrefix>notes</mat-icon>
+        </mat-form-field>
+      </form>
+    }
+  </div>
+
+  <div mat-dialog-actions class="dialog-footer">
+    <button mat-stroked-button (click)="cancel()" [disabled]="isSaving()">
+      {{ 'cancel' | translate }}
+    </button>
+
+    <button
+      mat-flat-button
+      color="accent"
+      (click)="save()"
+      [disabled]="isSaving() || isLoading() || !form.valid"
+    >
+      @if (isSaving()) {
+        <mat-spinner diameter="18" class="inline-spinner" />
+      } @else {
+        <mat-icon>save</mat-icon>
+      }
+      {{ 'save' | translate }}
+    </button>
+  </div>
+</div>

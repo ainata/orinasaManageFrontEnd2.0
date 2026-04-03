@@ -20,7 +20,6 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { TranslateModule } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { PageHeader } from '@shared';
 import { ActivityService } from '../activity.service';
 import { DepartmentService } from '../../department/department.service';
 import { AuthService } from '@core/authentication';
@@ -41,7 +40,6 @@ interface DepartmentWithActivities {
   imports: [
     CommonModule,
     TranslateModule,
-    PageHeader,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,

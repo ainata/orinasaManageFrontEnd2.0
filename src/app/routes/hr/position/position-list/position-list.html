@@ -1,1 +1,128 @@
-<p>position-list works!</p>
+<div class="sm:p-6 w-full max-w-screen-xl mx-auto">
+  <mat-card class="company-card">
+    <div
+      class="header p-4"
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+        justify-content: space-between;
+      "
+    >
+      <mat-form-field
+        subscriptSizing="dynamic"
+        appearance="outline"
+        class="filter-field"
+        style="flex: 1; min-width: 250px; max-width: 400px"
+      >
+        <mat-label>Rechercher</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Nom, code…" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <button
+        (click)="addPosition()"
+        mat-flat-button
+        color="accent"
+        class="add-button"
+        style="white-space: nowrap; height: 46px"
+      >
+        <mat-icon class="mr-2">add</mat-icon>
+        {{ 'add_position' | translate }}
+      </button>
+    </div>
+
+    <div class="relative">
+      @if (isLoading()) {
+        <div class="loading-shade">
+          <mat-spinner diameter="40" />
+        </div>
+      }
+
+      <mat-accordion multi class="px-4 pb-4">
+        @for (group of activityGroups(); track group.activity.id) {
+          <mat-expansion-panel [expanded]="false" class="mb-3">
+            <mat-expansion-panel-header>
+              <mat-panel-title class="font-semibold">
+                <mat-icon class="mr-2 text-blue-60">work_outline</mat-icon>
+                {{ group.activity.name }}
+              </mat-panel-title>
+              <mat-panel-description>
+                <span class="dept-hint">{{ group.department.name }}</span>
+                ·
+                {{ group.dataSource.filteredData.length }}
+                {{ 'positions_count_suffix' | translate }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="table-container">
+              <table mat-table [dataSource]="group.dataSource" matSort>
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                  <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+                  <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="code">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
+                  <td mat-cell *matCellDef="let element">{{ element.code }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="description">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
+                  <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef class="text-right">Action</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    class="text-right items-center gap-2 flex justify-end"
+                  >
+                    <button
+                      mat-icon-button
+                      class="bg-blue-90 hover:bg-blue-80 text-blue-10 mr-2"
+                      (click)="edit(element)"
+                      matTooltip="Modifier"
+                      style="margin-right: 8px"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      class="bg-red-90 hover:bg-red-80 text-red-10"
+                      color="warn"
+                      (click)="delete(element.id)"
+                      matTooltip="Supprimer"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell text-center py-4" [attr.colspan]="displayedColumns.length">
+                    {{ 'no_positions_for_activity' | translate }}
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </mat-expansion-panel>
+        }
+
+        @if (!isLoading() && activityGroups().length === 0) {
+          <p class="text-center py-8 text-gray-400">{{ 'no_activity_for_positions' | translate }}</p>
+        }
+      </mat-accordion>
+    </div>
+  </mat-card>
+</div>
