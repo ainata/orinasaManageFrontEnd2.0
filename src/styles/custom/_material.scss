@@ -1,5 +1,15 @@
 /** Custom Material styles */
 
+/* Titres de carte un peu plus légers (cohérent avec la base réduite) */
+.mat-mdc-card-title {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.mat-mdc-card-subtitle {
+  font-size: 0.8125rem;
+}
+
 mat-card {
   margin-bottom: var(--gutter);
 }

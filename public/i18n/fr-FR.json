@@ -90,5 +90,11 @@
   "restore_defaults": "Restaurer les valeurs par défaut",
   "save": "Enregistrer",
   "cancel": "Annuler",
-  "search": "Rechercher"
+  "search": "Rechercher",
+  "notifications": {
+    "success": "L'opération a réussi",
+    "success_title": "Succès",
+    "error": "Une erreur est survenue",
+    "error_title": "Erreur"
+  }
 }

@@ -83,5 +83,11 @@
   "have_an_account": "Already have an account",
   "restore_defaults": "Restore defaults",
   "save": "Save",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "notifications": {
+    "success": "Operation successful",
+    "success_title": "Success",
+    "error": "An error occurred",
+    "error_title": "Error"
+  }
 }

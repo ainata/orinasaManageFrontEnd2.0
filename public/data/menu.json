@@ -61,7 +61,7 @@
           "icon": "person_pin"
         },
         {
-          "route": "employees",
+          "route": "employee",
           "name": "employees",
           "type": "link",
           "icon": "person"

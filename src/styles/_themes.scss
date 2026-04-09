@@ -9,8 +9,21 @@ html {
       tertiary: mat.$blue-palette,
     ),
     typography: Roboto,
-    density: 0
+    /* -1 = champs / boutons / listes un peu plus compacts (Material 3) */
+    density: -1
   ));
+}
+
+/*
+ * Champs formulaire : hauteur et padding vertical × 0,9 (≈ −10 %).
+ * Variables intermédiaires pour éviter une référence circulaire sur --mat-form-field-*.
+ */
+html {
+  --mat-form-field-height-original: var(--mat-form-field-container-height, 52px);
+  --mat-form-field-container-height: calc(var(--mat-form-field-height-original) * 0.9);
+
+  --mat-form-field-vpad-original: var(--mat-form-field-container-vertical-padding, 14px);
+  --mat-form-field-container-vertical-padding: calc(var(--mat-form-field-vpad-original) * 0.9);
 }
 
 .theme-dark {

@@ -7,6 +7,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { AuthService, SettingsService } from '@core';
+import { TokenService } from '@core/authentication';
 
 @Component({
   selector: 'app-user',
@@ -58,6 +59,7 @@ export class UserButton {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly settings = inject(SettingsService);
+  private readonly tokenService = inject(TokenService);
 
   user = toSignal(this.auth.user());
 
@@ -67,9 +69,9 @@ export class UserButton {
   }
 
   logout() {
-    this.auth.logout().subscribe(() => {
-      this.router.navigateByUrl('/auth/login');
-    });
+    // Pas d'API logout côté serveur : on vide le token localement
+    this.tokenService.clear();
+    this.router.navigateByUrl('/auth/login');
   }
 
   restore() {

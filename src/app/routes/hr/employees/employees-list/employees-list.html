@@ -1,1 +1,124 @@
-<p>employees-list works!</p>
+<div class="sm:p-6 w-full max-w-screen-xl mx-auto">
+  <mat-card class="company-card">
+    <div
+      class="header p-4"
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+        justify-content: space-between;
+      "
+    >
+      <mat-form-field
+        subscriptSizing="dynamic"
+        appearance="outline"
+        class="filter-field"
+        style="flex: 1; min-width: 250px; max-width: 400px"
+      >
+        <mat-label>{{ 'search' | translate }}</mat-label>
+        <input matInput (keyup)="applySearch($event)" [placeholder]="'search' | translate" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <button
+        routerLink="/hr/employee/add"
+        mat-flat-button
+        color="accent"
+        class="add-button"
+        style="white-space: nowrap; height: 46px"
+      >
+        <mat-icon class="mr-2">add</mat-icon>
+        {{ 'add' | translate }}
+      </button>
+    </div>
+
+    <div class="table-container relative">
+      <table mat-table [dataSource]="dataSource" matSort>
+
+        <!-- Code Column -->
+        <ng-container matColumnDef="employeeCode">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'code' | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.employeeCode }}</td>
+        </ng-container>
+
+        <!-- Name Column (firstName + lastName) -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'name' | translate }}</th>
+          <td mat-cell *matCellDef="let element">
+            <strong>{{ element.firstName }} {{ element.lastName }}</strong>
+          </td>
+        </ng-container>
+
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'email' | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+        </ng-container>
+
+        <!-- Department Column -->
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef>{{ 'department' | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.department?.name || '-' }}</td>
+        </ng-container>
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef>{{ 'position' | translate }}</th>
+          <td mat-cell *matCellDef="let element">{{ element.position?.name || '-' }}</td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="enabled">
+          <th mat-header-cell *matHeaderCellDef>{{ ('status' | translate) || 'Status' }}</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-slide-toggle
+              [checked]="element.enabled"
+              (change)="toggleStatus(element, $event)"
+              color="primary">
+            </mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="text-right"></th>
+          <td mat-cell *matCellDef="let element" class="text-right">
+            <a
+              mat-icon-button
+              class="bg-blue-90 hover:bg-blue-80 text-blue-10"
+              [routerLink]="['/hr/employee/details', element.id]"
+              matTooltip="{{ 'edit' | translate }}"
+            >
+              <mat-icon>edit</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row-hover"></tr>
+
+        <!-- No data row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell text-center p-3" [attr.colspan]="displayedColumns.length">
+            {{ 'no_data' | translate }}
+          </td>
+        </tr>
+      </table>
+
+      @if (isLoading()) {
+        <div class="loading-shade">
+          <mat-spinner diameter="40" />
+        </div>
+      }
+    </div>
+
+    <mat-paginator
+      [length]="totalElements()"
+      [pageSize]="slice.size"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      (page)="onPageChange($event)"
+      aria-label="Select page">
+    </mat-paginator>
+  </mat-card>
+</div>

@@ -36,6 +36,10 @@ export class SettingsService {
   localeMap: Record<string, Locale> = { 'en-US': enUS, 'fr-FR': fr };
 
   constructor() {
+    if (this.options.language === 'fr') {
+      this.options.language = 'fr-FR';
+      this.store.set(this.key, this.options);
+    }
     this.translate.addLangs(this.languages);
   }
 
@@ -83,10 +87,6 @@ export class SettingsService {
   }
 
   getTranslateLang() {
-    if (this.options.language === 'fr-FR') {
-      const browserLang = navigator.language;
-      return this.languages.includes(browserLang) ? browserLang : 'fr-FR';
-    }
     return this.options.language;
   }
 

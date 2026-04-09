@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { IndividualConfig, ToastrService } from 'ngx-toastr';
 
@@ -32,44 +33,60 @@ export class NotificationService {
     this.toastr.warning(message, title, this.toastOptions);
   }
 
+  /**
+   * - Erreur métier : objet { code, msg } renvoyé par l’intercepteur API
+   * - Erreur HTTP : {@link HttpErrorResponse} (corps souvent dans `error`)
+   */
   getErrorMessage(error: unknown, fallback = 'Une erreur est survenue') {
-    if (!error || typeof error !== 'object') {
+    if (error == null) {
       return fallback;
     }
 
-    const errorObj = error as {
-      message?: string;
-      error?: { message?: string; msg?: string; errors?: Record<string, string[]> };
-      status?: number;
-      statusText?: string;
-    };
-
-    if (errorObj.error?.message) {
-      return errorObj.error.message;
+    if (typeof error !== 'object') {
+      return String(error);
     }
 
-    if (errorObj.error?.msg) {
-      return errorObj.error.msg;
-    }
-
-    if (errorObj.error?.errors) {
-      const firstKey = Object.keys(errorObj.error.errors)[0];
-      const firstError = firstKey ? errorObj.error.errors[firstKey]?.[0] : '';
-      if (firstError) {
-        return firstError;
+    if (!(error instanceof HttpErrorResponse)) {
+      const b = error as { msg?: string; message?: string };
+      if (typeof b.msg === 'string' && b.msg.trim()) {
+        return b.msg;
       }
+      if (typeof b.message === 'string' && b.message.trim()) {
+        return b.message;
+      }
+      return fallback;
     }
 
-    if (errorObj.message) {
-      return errorObj.message;
-    }
+    const err = error;
 
-    if (errorObj.status === 0) {
+    if (err.status === 0) {
       return 'Impossible de joindre le serveur API. Verifiez que le backend est demarre.';
     }
 
-    if (errorObj.status) {
-      return `${errorObj.status} ${errorObj.statusText ?? ''}`.trim();
+    const body = err.error;
+    if (body != null && typeof body === 'object') {
+      const o = body as { message?: string; msg?: string; errors?: Record<string, string[]> };
+      if (typeof o.msg === 'string' && o.msg.trim()) {
+        return o.msg;
+      }
+      if (typeof o.message === 'string' && o.message.trim()) {
+        return o.message;
+      }
+      if (o.errors) {
+        const firstKey = Object.keys(o.errors)[0];
+        const firstErr = firstKey ? o.errors[firstKey]?.[0] : '';
+        if (firstErr) {
+          return firstErr;
+        }
+      }
+    }
+
+    if (typeof body === 'string' && body.trim()) {
+      return body;
+    }
+
+    if (err.status >= 400) {
+      return `${err.status} ${err.statusText ?? ''}`.trim();
     }
 
     return fallback;

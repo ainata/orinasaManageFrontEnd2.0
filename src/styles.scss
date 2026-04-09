@@ -92,6 +92,14 @@
 }
 
 
+/*
+ * Texte et contrôles légèrement plus petits (toute l’app : Material + contenu).
+ * ~15px de base si le navigateur est à 16px ; ajustez 90–95% selon le rendu.
+ */
+html {
+  font-size: 93.75%;
+}
+
 /* SPINNER */
 .loading-shade {
   position: absolute;
