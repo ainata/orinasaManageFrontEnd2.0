@@ -12,6 +12,7 @@ import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from 
 import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { MAT_CARD_CONFIG } from '@angular/material/card';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideDateFnsDatetimeAdapter } from '@ng-matero/extensions-date-fns-adapter';
@@ -81,6 +82,13 @@ export const appConfig: ApplicationConfig = {
       provide: MAT_CARD_CONFIG,
       useValue: {
         appearance: 'outlined',
+      },
+    },
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: {
+        appearance: 'outline',
+        subscriptSizing: 'fixed',
       },
     },
     provideDateFnsAdapter({

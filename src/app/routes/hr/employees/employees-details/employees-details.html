@@ -5,13 +5,13 @@
   @if (isLoading()) {
     <div class="loading-container">
       <mat-spinner diameter="48" />
-      <p class="loading-text">Chargement...</p>
+      <p class="loading-text">{{ 'loading' | translate }}...</p>
     </div>
   }
 
   @if (!isLoading() && employee()) {
     <!-- Page Header -->
-    <div class="page-header">
+    <div class="page-header no-print">
       <div class="header-left">
         <button mat-icon-button routerLink="/hr/employee/list" class="back-btn" matTooltip="{{ 'cancel' | translate }}">
           <mat-icon>arrow_back</mat-icon>
@@ -22,14 +22,18 @@
         </div>
       </div>
       <div class="header-right">
+        <button mat-stroked-button color="primary" (click)="printBadge()" class="print-btn">
+          <mat-icon>badge</mat-icon>
+          {{ 'print_badge' | translate }}
+        </button>
         <span class="status-badge" [class.active]="employee()?.enabled" [class.inactive]="!employee()?.enabled">
           <mat-icon>{{ employee()?.enabled ? 'check_circle' : 'cancel' }}</mat-icon>
-          {{ employee()?.enabled ? 'Actif' : 'Inactif' }}
+          {{ (employee()?.enabled ? 'active' : 'inactive') | translate }}
         </span>
       </div>
     </div>
 
-    <div class="details-grid">
+    <div class="details-grid no-print">
       <!-- Left column: Profile Card -->
       <mat-card class="profile-card">
         <div class="avatar-section">
@@ -46,79 +50,10 @@
           </div>
         </div>
 
-        <mat-divider />
-
-        <div class="info-list">
-          <div class="info-item">
-            <mat-icon class="info-icon">business</mat-icon>
-            <div>
-              <span class="info-label">Entreprise</span>
-              <span class="info-value">{{ employee()?.company?.code || '-' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon class="info-icon">apartment</mat-icon>
-            <div>
-              <span class="info-label">Département</span>
-              <span class="info-value">{{ employee()?.department?.name || '-' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon class="info-icon">work</mat-icon>
-            <div>
-              <span class="info-label">Activité</span>
-              <span class="info-value">{{ employee()?.activity?.name || '-' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon class="info-icon">badge</mat-icon>
-            <div>
-              <span class="info-label">Poste</span>
-              <span class="info-value">{{ employee()?.position?.name || '-' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon class="info-icon">wc</mat-icon>
-            <div>
-              <span class="info-label">Genre</span>
-              <span class="info-value">{{ employee()?.gender || '-' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon class="info-icon">cake</mat-icon>
-            <div>
-              <span class="info-label">Date de naissance</span>
-              <span class="info-value">{{ (employee()?.birthDate | date:'dd/MM/yyyy') || '-' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon class="info-icon">location_on</mat-icon>
-            <div>
-              <span class="info-label">Lieu de naissance</span>
-              <span class="info-value">{{ employee()?.birthPlace || '-' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon class="info-icon">flag</mat-icon>
-            <div>
-              <span class="info-label">Nationalité</span>
-              <span class="info-value">{{ employee()?.nationality || '-' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon class="info-icon">credit_card</mat-icon>
-            <div>
-              <span class="info-label">CIN</span>
-              <span class="info-value">{{ employee()?.cin || '-' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon class="info-icon">favorite</mat-icon>
-            <div>
-              <span class="info-label">Situation matrimoniale</span>
-              <span class="info-value">{{ employee()?.maritalStatus || '-' }}</span>
-            </div>
-          </div>
+        <!-- QR Code Section -->
+        <div class="qr-section">
+          <qrcode [qrdata]="employee()?.employeeCode || ''" [width]="120" [errorCorrectionLevel]="'M'"></qrcode>
+          <span class="qr-label">{{ 'code' | translate }}: {{ employee()?.employeeCode }}</span>
         </div>
       </mat-card>
 
@@ -126,8 +61,8 @@
       <mat-card class="edit-card">
         <mat-card-header class="edit-header">
           <mat-icon mat-card-avatar>edit</mat-icon>
-          <mat-card-title>Modifier les informations</mat-card-title>
-          <mat-card-subtitle>Modifiez les informations de l'employé</mat-card-subtitle>
+          <mat-card-title>{{ 'edit_employee' | translate }}</mat-card-title>
+          <mat-card-subtitle>{{ 'register_title' | translate }}</mat-card-subtitle>
         </mat-card-header>
 
         <mat-divider />
@@ -135,46 +70,122 @@
         <mat-card-content>
           <form [formGroup]="form" (ngSubmit)="save()" class="edit-form">
 
+            <h3 class="section-title">{{ 'personal_info' | translate }}</h3>
             <div class="form-row">
-              <!-- Prénom -->
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field">
-                <mat-label>Prénom</mat-label>
-                <mat-icon matPrefix>person</mat-icon>
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'first_name' | translate }}</mat-label>
                 <input matInput formControlName="firstName" required />
-                @if (form.get('firstName')?.hasError('required')) {
-                  <mat-error>{{ 'validation.required' | translate }}</mat-error>
-                }
-              </mat-form-field>
+              </mat-form-field> 
 
-              <!-- Nom -->
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field">
-                <mat-label>Nom</mat-label>
-                <mat-icon matPrefix>person_outline</mat-icon>
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'last_name' | translate }}</mat-label>
                 <input matInput formControlName="lastName" required />
-                @if (form.get('lastName')?.hasError('required')) {
-                  <mat-error>{{ 'validation.required' | translate }}</mat-error>
-                }
               </mat-form-field>
             </div>
 
-            <!-- Email -->
-            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="form-field full-width">
-              <mat-label>{{ 'email' | translate }}</mat-label>
-              <mat-icon matPrefix>email</mat-icon>
-              <input matInput formControlName="email" type="email" required />
-              @if (form.get('email')?.hasError('required')) {
-                <mat-error>{{ 'validation.required' | translate }}</mat-error>
-              }
-              @if (form.get('email')?.hasError('email')) {
-                <mat-error>{{ 'validation.invalid_email' | translate }}</mat-error>
-              }
-            </mat-form-field>
+            <div class="form-row">
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'email' | translate }}</mat-label>
+                <input matInput formControlName="email" type="email" required />
+              </mat-form-field>
+
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'gender' | translate }}</mat-label>
+                <mat-select formControlName="gender">
+                  @for (option of genderOptions; track option.value) {
+                    <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'birthday' | translate }}</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="birthDate">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'birth_place' | translate }}</mat-label>
+                <input matInput formControlName="birthPlace" />
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'nationality' | translate }}</mat-label>
+                <input matInput formControlName="nationality" />
+              </mat-form-field>
+
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'marital_status' | translate }}</mat-label>
+                <mat-select formControlName="maritalStatus">
+                  @for (option of maritalStatusOptions; track option.value) {
+                    <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'children_count' | translate }}</mat-label>
+                <input matInput type="number" formControlName="childrenCount" min="0" />
+              </mat-form-field>
+              <div class="form-field"></div> <!-- Spacer -->
+            </div>
+
+            <h3 class="section-title">{{ 'professional_info' | translate }}</h3>
+            <div class="form-row">
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'department' | translate }}</mat-label>
+                <mat-select formControlName="departmentId">
+                  <mat-option [value]="null">{{ 'no_data' | translate }}</mat-option>
+                  @for (dept of departments(); track dept.id) {
+                    <mat-option [value]="dept.id">{{ dept.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'activity' | translate }}</mat-label>
+                <mat-select formControlName="activityId">
+                  <mat-option [value]="null">{{ 'no_data' | translate }}</mat-option>
+                  @for (act of activities(); track act.id) {
+                    <mat-option [value]="act.id">{{ act.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'position' | translate }}</mat-label>
+                <mat-select formControlName="positionId">
+                  <mat-option [value]="null">{{ 'no_data' | translate }}</mat-option>
+                  @for (pos of positions(); track pos.id) {
+                    <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="form-field">
+                <mat-label>{{ 'roles' | translate }}</mat-label>
+                <mat-select formControlName="roleIds" multiple>
+                  @for (role of roles(); track role.id) {
+                    <mat-option [value]="role.id">{{ role.name }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
 
             <!-- Statut actif -->
             <div class="toggle-row">
               <span class="toggle-label">
                 <mat-icon>toggle_on</mat-icon>
-                {{ 'status' | translate }}
+                {{ 'status' | translate }} ({{ (form.get('enabled')?.value ? 'active' : 'inactive') | translate }})
               </span>
               <mat-slide-toggle formControlName="enabled" color="primary"></mat-slide-toggle>
             </div>
@@ -199,6 +210,47 @@
           </form>
         </mat-card-content>
       </mat-card>
+    </div>
+
+    <!-- Badge Template for Printing -->
+    <div class="badge-print-container only-print">
+      <div class="badge-card">
+        <div class="badge-header">
+          <div class="company-logo">
+            <span class="company-name">{{ employee()?.company?.code }}</span>
+          </div>
+          <div class="badge-title">BADGE EMPLOYÉ</div>
+        </div>
+        
+        <div class="badge-body">
+          <div class="badge-photo">
+            @if (employee()?.photo) {
+              <img [src]="employee()?.photo" alt="photo" />
+            } @else {
+              <div class="photo-placeholder">
+                <mat-icon>person</mat-icon>
+              </div>
+            }
+          </div>
+          
+          <div class="badge-info">
+            <h2 class="emp-name">{{ fullName }}</h2>
+            <div class="emp-pos">{{ employee()?.position?.name }}</div>
+            <div class="emp-dept">{{ employee()?.department?.name }}</div>
+            <div class="emp-service">{{ employee()?.activity?.name }}</div>
+          </div>
+        </div>
+        
+        <div class="badge-footer">
+          <div class="badge-qr">
+            <qrcode [qrdata]="employee()?.employeeCode || ''" [width]="80" [errorCorrectionLevel]="'M'"></qrcode>
+          </div>
+          <div class="badge-code">
+            <span class="code-label">ID Matr:</span>
+            <span class="code-value">{{ employee()?.employeeCode }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   }
 </div>

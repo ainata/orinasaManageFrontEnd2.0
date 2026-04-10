@@ -61,23 +61,43 @@ export interface Employee {
 
 // Request Models
 export interface CreateUserRequest {
-  code: string;
+  companyId: number;
+  departmentId: number;
+  activityId: number;
+  positionId: number;
   firstName: string;
   lastName: string;
-  email: string;
-  enabled: boolean;
-  companyIds?: number[];
+  email?: string;
+  gender: string;
+  password?: string;
+  cin: string;
+  maritalStatus?: string;
+  childrenCount?: number;
+  photo?: string;
+  nationality?: string;
+  birthPlace?: string;
+  birthDate?: string; // ISO DATE format
   roleIds?: number[];
+  enabled?: boolean;
 }
 
 export interface UpdateUserRequest {
-  code: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  enabled: boolean;
-  companyIds?: number[];
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  gender?: string;
+  birthDate?: string;
+  birthPlace?: string;
+  nationality?: string;
+  maritalStatus?: string;
+  childrenCount?: number;
+  photo?: string | null;
+  departmentId?: number;
+  activityId?: number;
+  positionId?: number;
   roleIds?: number[];
+  documentIds?: number[];
+  enabled?: boolean;
 }
 
 export interface UpdateUserStatusRequest {

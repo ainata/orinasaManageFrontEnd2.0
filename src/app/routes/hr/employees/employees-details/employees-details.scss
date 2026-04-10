@@ -50,6 +50,12 @@
     }
   }
 
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
   .status-badge {
     display: inline-flex;
     align-items: center;
@@ -83,7 +89,7 @@
   gap: 24px;
   align-items: start;
 
-  @media (max-width: 900px) {
+  @media (max-width: 1024px) {
     grid-template-columns: 1fr;
   }
 }
@@ -92,25 +98,27 @@
 .profile-card {
   position: sticky;
   top: 16px;
+  overflow: hidden;
 
   .avatar-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 24px 16px 20px;
+    padding: 24px 16px 16px;
     gap: 12px;
 
     .avatar-img {
-      width: 80px;
-      height: 80px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid var(--mat-sys-primary);
+      border: 4px solid var(--mat-sys-primary-container);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .avatar-placeholder {
-      width: 80px;
-      height: 80px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       background: var(--mat-sys-primary-container);
       display: flex;
@@ -118,9 +126,9 @@
       justify-content: center;
 
       mat-icon {
-        font-size: 40px;
-        width: 40px;
-        height: 40px;
+        font-size: 60px;
+        width: 60px;
+        height: 60px;
         color: var(--mat-sys-on-primary-container);
       }
     }
@@ -131,16 +139,32 @@
       .avatar-name {
         display: block;
         font-weight: 600;
-        font-size: 16px;
+        font-size: 18px;
         color: var(--mat-sys-on-surface);
       }
 
       .avatar-position {
         display: block;
-        font-size: 13px;
-        color: var(--mat-sys-on-surface-variant);
-        margin-top: 2px;
+        font-size: 14px;
+        color: var(--mat-sys-primary);
+        font-weight: 500;
+        margin-top: 4px;
       }
+    }
+  }
+
+  .qr-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 20px;
+    gap: 4px;
+
+    .qr-label {
+      font-size: 10px;
+      color: var(--mat-sys-on-surface-variant);
+      font-family: monospace;
+      text-transform: uppercase;
     }
   }
 
@@ -151,17 +175,17 @@
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      padding: 10px 16px;
+      padding: 12px 20px;
       transition: background 0.15s;
 
       &:hover {
-        background: var(--mat-sys-surface-variant, rgba(0,0,0,0.04));
+        background: var(--mat-sys-surface-variant);
       }
 
       .info-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
         color: var(--mat-sys-primary);
         margin-top: 2px;
         flex-shrink: 0;
@@ -172,7 +196,7 @@
         flex-direction: column;
 
         .info-label {
-          font-size: 11px;
+          font-size: 10px;
           text-transform: uppercase;
           letter-spacing: 0.5px;
           color: var(--mat-sys-on-surface-variant);
@@ -180,7 +204,7 @@
         }
 
         .info-value {
-          font-size: 13px;
+          font-size: 14px;
           font-weight: 500;
           color: var(--mat-sys-on-surface);
           margin-top: 2px;
@@ -193,45 +217,62 @@
 /* Right: Edit Form */
 .edit-card {
   .edit-header {
-    padding: 20px 24px 16px;
+    padding: 24px 32px 16px;
+
+    mat-icon {
+      background: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+      padding: 8px;
+      border-radius: 8px;
+    }
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mat-sys-primary);
+    margin: 16px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .edit-form {
-    padding: 20px 24px 8px;
+    padding: 0 10px 0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 20px;
 
-      @media (max-width: 600px) {
+      @media (max-width: 640px) {
         grid-template-columns: 1fr;
       }
     }
 
     .form-field {
       width: 100%;
-
-      &.full-width {
-        width: 100%;
-      }
     }
 
     .toggle-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 0;
+      padding: 12px 16px;
+      background: var(--mat-sys-surface-variant);
+      border-radius: 8px;
+      margin: 8px 0;
 
       .toggle-label {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 600;
         color: var(--mat-sys-on-surface);
 
         mat-icon {
@@ -243,14 +284,168 @@
     .form-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 12px;
-      padding: 12px 0 8px;
+      gap: 16px;
 
       button {
-        display: flex;
-        align-items: center;
-        gap: 6px;
+        padding: 0 24px;
+        height: 44px;
       }
     }
   }
+}
+
+/* Print Specific Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .only-print {
+    display: block !important;
+  }
+
+  body {
+    background: white;
+  }
+
+  .badge-print-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+  }
+
+  .badge-card {
+    width: 320px;
+    height: 500px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: white;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+
+    .badge-header {
+      background: #1a237e;
+      /* Navy blue */
+      color: white;
+      padding: 20px;
+      text-align: center;
+
+      .company-name {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: 2px;
+      }
+
+      .badge-title {
+        font-size: 12px;
+        margin-top: 5px;
+        opacity: 0.8;
+        letter-spacing: 1px;
+      }
+    }
+
+    .badge-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      text-align: center;
+
+      .badge-photo {
+        width: 140px;
+        height: 140px;
+        border-radius: 12px;
+        border: 4px solid #f5f5f5;
+        overflow: hidden;
+        margin-bottom: 20px;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .photo-placeholder {
+          width: 100%;
+          height: 100%;
+          background: #eee;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          mat-icon {
+            font-size: 60px;
+            color: #ccc;
+          }
+        }
+      }
+
+      .badge-info {
+        .emp-name {
+          font-size: 22px;
+          font-weight: 700;
+          color: #1a237e;
+          margin: 0 0 10px;
+        }
+
+        .emp-pos {
+          font-size: 16px;
+          font-weight: 600;
+          color: #d32f2f;
+          /* Accent color */
+          margin-bottom: 15px;
+        }
+
+        .emp-dept,
+        .emp-service {
+          font-size: 13px;
+          color: #666;
+          margin-bottom: 2px;
+        }
+      }
+    }
+
+    .badge-footer {
+      background: #f5f5f5;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px dashed #ccc;
+
+      .badge-qr {
+        background: white;
+        padding: 5px;
+        border-radius: 4px;
+      }
+
+      .badge-code {
+        text-align: right;
+
+        .code-label {
+          font-size: 10px;
+          color: #888;
+          display: block;
+        }
+
+        .code-value {
+          font-size: 14px;
+          font-weight: 700;
+          font-family: monospace;
+        }
+      }
+    }
+  }
+}
+
+.only-print {
+  display: none;
 }

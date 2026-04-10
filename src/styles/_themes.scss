@@ -3,27 +3,23 @@
 html {
   color-scheme: light;
 
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    /* -1 = champs / boutons / listes un peu plus compacts (Material 3) */
-    density: -1
-  ));
+  @include mat.theme((color: (primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      /* -3 = champs / boutons / listes au plus compact (Material 3) */
+      density: -2));
 }
 
 /*
- * Champs formulaire : hauteur et padding vertical × 0,9 (≈ −10 %).
- * Variables intermédiaires pour éviter une référence circulaire sur --mat-form-field-*.
+ * Champs formulaire : hauteur réduite globalement.
  */
 html {
-  --mat-form-field-height-original: var(--mat-form-field-container-height, 52px);
-  --mat-form-field-container-height: calc(var(--mat-form-field-height-original) * 0.9);
+  --mat-form-field-container-height: 45px;
+  --mdc-outlined-text-field-container-height: 45px;
+  --mdc-filled-text-field-container-height: 45px;
 
-  --mat-form-field-vpad-original: var(--mat-form-field-container-vertical-padding, 14px);
-  --mat-form-field-container-vertical-padding: calc(var(--mat-form-field-vpad-original) * 0.9);
+  --mat-form-field-container-vertical-padding: 10px;
 }
 
 .theme-dark {

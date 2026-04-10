@@ -1,97 +1,200 @@
-<div class="d-flex align-items-center justify-content-between mb-4">
-  <h2 class="mat-headline-5 m-0">{{ 'add_employee' | translate }}</h2>
-  <button mat-icon-button routerLink="/hr/employee/list" matTooltip="{{ 'cancel' | translate }}">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-</div>
+<div class="sm:p-6 w-full max-w-screen-xl mx-auto">
+  <!-- Page Header -->
+  <div class="page-header mb-4">
+    <div class="header-left">
+      <button mat-icon-button routerLink="/hr/employee/list" class="back-btn" matTooltip="{{ 'cancel' | translate }}">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <h1 class="page-title">{{ 'add_employee' | translate }}</h1>
+        <span class="breadcrumb-text">RH / {{ 'hr.employees' | translate }} / {{ 'add' | translate }}</span>
+      </div>
+    </div>
+  </div>
 
-<mat-card class="mat-elevation-z1">
-  <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="save()" class="p-3">
-      <div class="row">
-        <!-- Code -->
-        <div class="col-sm-6">
-          <mat-form-field appearance="outline" class="w-100 mb-3">
-            <mat-label>{{ 'code' | translate }}</mat-label>
-            <input matInput formControlName="code" required />
-            <mat-error *ngIf="form.get('code')?.hasError('required')">
-              {{ 'validation.required' | translate }}
-            </mat-error>
+  <mat-card class="edit-card mat-elevation-z2">
+    <mat-card-header class="edit-header">
+      <mat-icon mat-card-avatar>person_add</mat-icon>
+      <mat-card-title>{{ 'add_employee' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'register_title' | translate }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-divider />
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="save()" class="edit-form py-4">
+
+        <!-- SECTION: Informations Personnelles -->
+        <h3 class="section-title">{{ 'personal_info' | translate }}</h3>
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'first_name' | translate }}</mat-label>
+            <input matInput formControlName="firstName" required />
+            <mat-error *ngIf="form.get('firstName')?.hasError('required')">{{ 'validation.required' | translate }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'last_name' | translate }}</mat-label>
+            <input matInput formControlName="lastName" required />
+            <mat-error *ngIf="form.get('lastName')?.hasError('required')">{{ 'validation.required' | translate }}</mat-error>
           </mat-form-field>
         </div>
 
-        <!-- Name -->
-        <div class="col-sm-6">
-          <mat-form-field appearance="outline" class="w-100 mb-3">
-            <mat-label>{{ 'name' | translate }}</mat-label>
-            <input matInput formControlName="name" required />
-            <mat-error *ngIf="form.get('name')?.hasError('required')">
-              {{ 'validation.required' | translate }}
-            </mat-error>
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'cin' | translate }}</mat-label>
+            <input matInput formControlName="cin" required />
+            <mat-error *ngIf="form.get('cin')?.hasError('required')">{{ 'validation.required' | translate }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'gender' | translate }}</mat-label>
+            <mat-select formControlName="gender" required>
+              @for (option of genderOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+              }
+            </mat-select>
           </mat-form-field>
         </div>
 
-        <!-- Email -->
-        <div class="col-sm-12">
-          <mat-form-field appearance="outline" class="w-100 mb-3">
-            <mat-label>{{ 'email' | translate }}</mat-label>
-            <input matInput formControlName="email" type="email" required />
-            <mat-error *ngIf="form.get('email')?.hasError('required')">
-              {{ 'validation.required' | translate }}
-            </mat-error>
-            <mat-error *ngIf="form.get('email')?.hasError('email')">
-              {{ 'validation.invalid_email' | translate }}
-            </mat-error>
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'birthday' | translate }}</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="birthDate">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'birth_place' | translate }}</mat-label>
+            <input matInput formControlName="birthPlace" />
           </mat-form-field>
         </div>
 
-        <!-- Companies Multi-select -->
-        <div class="col-sm-6">
-          <mat-form-field appearance="outline" class="w-100 mb-3">
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'nationality' | translate }}</mat-label>
+            <input matInput formControlName="nationality" />
+          </mat-form-field>
+
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'marital_status' | translate }}</mat-label>
+            <mat-select formControlName="maritalStatus">
+              @for (option of maritalStatusOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'children_count' | translate }}</mat-label>
+            <input matInput type="number" formControlName="childrenCount" min="0" />
+          </mat-form-field>
+          <div class="form-field"></div> <!-- Spacer -->
+        </div>
+
+        <!-- SECTION: Informations Professionnelles -->
+        <h3 class="section-title">{{ 'professional_info' | translate }}</h3>
+        <div class="form-row">
+          <mat-form-field class="form-field">
             <mat-label>{{ 'company' | translate }}</mat-label>
-            <mat-select formControlName="companyIds" multiple required>
-              <mat-option *ngFor="let company of companies" [value]="company.id">
-                {{ company.name || company.domain }}
-              </mat-option>
+            <mat-select formControlName="companyId" required>
+              <mat-option [value]="null">{{ 'select_company' | translate }}</mat-option>
+              @for (comp of companies; track comp.id) {
+                <mat-option [value]="comp.id">{{ comp.name || comp.domain }}</mat-option>
+              }
             </mat-select>
-            <mat-error *ngIf="form.get('companyIds')?.hasError('required')">
-              {{ 'validation.required' | translate }}
-            </mat-error>
+            <mat-error *ngIf="form.get('companyId')?.hasError('required')">{{ 'validation.required' | translate }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'department' | translate }}</mat-label>
+            <mat-select formControlName="departmentId" required [disabled]="!form.get('companyId')?.value">
+              <mat-option [value]="null">{{ 'select_department' | translate }}</mat-option>
+              @for (dept of departments; track dept.id) {
+                <mat-option [value]="dept.id">{{ dept.name }}</mat-option>
+              }
+            </mat-select>
           </mat-form-field>
         </div>
 
-        <!-- Roles Multi-select -->
-        <div class="col-sm-6">
-          <mat-form-field appearance="outline" class="w-100 mb-3">
-            <mat-label>{{ 'role' | translate }}</mat-label>
-            <mat-select formControlName="roleIds" multiple required>
-              <mat-option *ngFor="let role of roles" [value]="role.id">
-                {{ role.name }}
-              </mat-option>
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'activity' | translate }}</mat-label>
+            <mat-select formControlName="activityId" required [disabled]="!form.get('departmentId')?.value">
+              <mat-option [value]="null">{{ 'select_activity' | translate }}</mat-option>
+              @for (act of activities; track act.id) {
+                <mat-option [value]="act.id">{{ act.name }}</mat-option>
+              }
             </mat-select>
-            <mat-hint *ngIf="roles.length === 0">{{ 'select_company_first' | translate }}</mat-hint>
-            <mat-error *ngIf="form.get('roleIds')?.hasError('required')">
-              {{ 'validation.required' | translate }}
-            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'position' | translate }}</mat-label>
+            <mat-select formControlName="positionId" required [disabled]="!form.get('activityId')?.value">
+              <mat-option [value]="null">{{ 'select_position' | translate }}</mat-option>
+              @for (pos of positions; track pos.id) {
+                <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
+              }
+            </mat-select>
           </mat-form-field>
         </div>
 
-        <!-- Enabled Status -->
-        <div class="col-sm-12 mb-3">
-          <mat-slide-toggle formControlName="enabled" color="primary">
-            {{ 'status' | translate }}
-          </mat-slide-toggle>
-        </div>
-      </div>
+        <!-- SECTION: Accès et Sécurité -->
+        <h3 class="section-title">{{ 'access_security' | translate }}</h3>
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'email' | translate }} professionnel</mat-label>
+            <input matInput formControlName="email" type="email" />
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
 
-      <div class="d-flex justify-content-end gap-2 mt-4">
-        <button mat-button type="button" routerLink="/hr/employee/list" [disabled]="isSaving">
-          {{ 'cancel' | translate }}
-        </button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isSaving">
-          {{ 'save' | translate }}
-        </button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'password' | translate }} (Optionnel)</mat-label>
+            <input matInput formControlName="password" type="password" />
+            <mat-icon matSuffix>lock</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'roles' | translate }}</mat-label>
+            <mat-select formControlName="roleIds" multiple>
+              @for (role of roles; track role.id) {
+                <mat-option [value]="role.id">{{ role.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="toggle-row">
+            <span class="toggle-label">
+              <mat-icon>toggle_on</mat-icon>
+              {{ 'status' | translate }} ({{ (form.get('enabled')?.value ? 'active' : 'inactive') | translate }})
+            </span>
+            <mat-slide-toggle formControlName="enabled" color="primary"></mat-slide-toggle>
+          </div>
+        </div>
+
+        <mat-divider class="my-4" />
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button mat-button type="button" routerLink="/hr/employee/list" [disabled]="isSaving">
+            <mat-icon>close</mat-icon>
+            {{ 'cancel' | translate }}
+          </button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || isSaving">
+            @if (isSaving) {
+              <mat-spinner diameter="18" style="display:inline-block; margin-right: 8px;"></mat-spinner>
+            } @else {
+              <mat-icon>person_add</mat-icon>
+            }
+            {{ 'save' | translate }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
