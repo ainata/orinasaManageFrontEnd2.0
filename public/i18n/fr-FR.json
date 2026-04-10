@@ -6,6 +6,7 @@
     "design.icons": "Icônes Material",
     "settings": "Paramètres",
     "settings.company": "Entreprise",
+    "settings.roles": "Rôles",
     "hr": "RH",
     "hr.departments": "Départements",
     "hr.activity": "Activité",
@@ -124,5 +125,6 @@
   "select_activity": "Sélectionnez un service",
   "select_position": "Sélectionnez un poste",
   "add_employee": "Ajouter un employé",
-  "edit_employee": "Modifier l'employé"
+  "edit_employee": "Modifier l'employé",
+  "loading": "Chargement"
 }

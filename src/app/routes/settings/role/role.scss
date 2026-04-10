@@ -1,0 +1,62 @@
+.table-container {
+  min-height: 200px;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+code {
+  font-family: monospace;
+}
+
+/* MatTable Hover Effect */
+.row-hover:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Action Buttons Colors */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-menu {
+  color: #3b82f6; /* Blue-500 */
+  &:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+}
+
+.btn-edit {
+  color: #f59e0b; /* Amber-500 */
+  &:hover {
+    background-color: rgba(245, 158, 11, 0.1);
+  }
+}
+
+.btn-delete {
+  color: #ef4444; /* Red-500 */
+  &:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+}
+
+/* Column Widths */
+.mat-column-actions {
+  width: 160px;
+}
+
+.mat-column-name {
+  width: 150px;
+}

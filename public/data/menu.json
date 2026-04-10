@@ -79,6 +79,12 @@
           "name": "company",
           "type": "link",
           "icon": "account_balance"
+        },
+        {
+          "route": "roles",
+          "name": "roles",
+          "type": "link",
+          "icon": "vignette"
         }
       ]
     }

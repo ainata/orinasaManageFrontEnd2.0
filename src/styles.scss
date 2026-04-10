@@ -40,6 +40,15 @@
   margin: 0 !important;
 }
 
+/* Custom Panel for Vibrant Confirm Dialog */
+.confirm-dialog-panel {
+  .mdc-dialog__surface {
+    padding: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+  }
+}
+
 .dialog-footer {
   padding: 16px 24px;
   justify-content: flex-end;

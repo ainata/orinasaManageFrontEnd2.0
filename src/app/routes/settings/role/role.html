@@ -1,0 +1,124 @@
+<div class="sm:p-6 w-full max-w-screen-xl mx-auto">
+  <mat-card class="company-card">
+    <div
+      class="header p-4"
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+        justify-content: space-between;
+      "
+    >
+      <mat-form-field
+        subscriptSizing="dynamic"
+        appearance="outline"
+        class="filter-field"
+        style="flex: 1; min-width: 250px; max-width: 400px"
+      >
+        <mat-label>{{ 'search' | translate }}</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Code, Nom" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="accent"
+        class="add-button"
+        style="white-space: nowrap; height: 46px"
+        (click)="openRoleForm()"
+      >
+        <mat-icon class="mr-2">add</mat-icon>
+        {{ 'add' | translate }}
+      </button>
+    </div>
+
+    <div class="table-container relative">
+      @if (isLoading) {
+        <div class="loading-shade">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      }
+
+      <table mat-table [dataSource]="dataSource" matSort class="w-full">
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
+          <td mat-cell *matCellDef="let role">
+            <span class="font-medium">{{ role.name }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Display Name Column -->
+        <ng-container matColumnDef="displayName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom affiché</th>
+          <td mat-cell *matCellDef="let role">{{ role.displayName }}</td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let role">{{ role.description || '-' }}</td>
+        </ng-container>
+
+        <!-- Default Route Column -->
+        <ng-container matColumnDef="defaultRoute">
+          <th mat-header-cell *matHeaderCellDef>Route par défaut</th>
+          <td mat-cell *matCellDef="let role">
+            <code class="text-xs bg-gray-100 p-1 rounded">{{ role.defaultRoute || '/' }}</code>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="text-right"></th>
+          <td mat-cell *matCellDef="let role" class="text-right">
+            <div class="action-buttons">
+              <button 
+                mat-icon-button 
+                class="bg-blue-90 hover:bg-blue-80 text-blue-10" 
+                (click)="openAssignMenus(role)" 
+                matTooltip="Gérer les menus"
+              >
+                <mat-icon>list_alt</mat-icon>
+              </button>
+              <button 
+                mat-icon-button 
+                class="bg-blue-90 hover:bg-blue-80 text-blue-10" 
+                (click)="openRoleForm(role)" 
+                matTooltip="{{ 'edit' | translate }}"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button 
+                mat-icon-button 
+                class="bg-red-90 hover:bg-red-80 text-red-10" 
+                (click)="deleteRole(role)" 
+                matTooltip="{{ 'delete' | translate }}"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row-hover"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell p-8 text-center" colspan="5">
+            {{ 'no_data' | translate }}
+          </td>
+        </tr>
+      </table>
+
+      @if (isLoading) {
+        <div class="loading-shade">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      }
+    </div>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" aria-label="Sélectionner la page"></mat-paginator>
+  </mat-card>
+</div>

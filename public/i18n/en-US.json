@@ -5,7 +5,8 @@
     "design.colors": "Color System",
     "design.icons": "Material Icons",
     "settings": "Settings",
-    "settings.company":"Company",
+    "settings.company": "Company",
+    "settings.roles": "Roles",
     "hr": "Human Resources",
     "hr.departments": "Departments",
     "hr.activity": "Activity",
@@ -117,5 +118,6 @@
   "select_activity": "Select a service",
   "select_position": "Select a position",
   "add_employee": "Add Employee",
-  "edit_employee": "Edit Employee"
+  "edit_employee": "Edit Employee",
+  "loading": "Loading"
 }
